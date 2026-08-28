@@ -109,7 +109,7 @@
       display: flex;
     }
 
-    /* BOTÓN VOLVER (UBICADO DEBAJO DEL ENCABEZADO SIN TAPAR EL LOGO) */
+    /* BOTÓN VOLVER */
     .btn-back {
       position: absolute;
       top: 10px;
@@ -705,8 +705,15 @@
       if (activeView) activeView.classList.add('active');
       
       document.getElementById('header-main-title').innerText = title;
-      currentViewId = viewId;
       
+      // Actualizar el título de la pestaña del navegador dinámicamente
+      if (viewId === 'view-home') {
+        document.title = 'Gerencia de Producción Industrial - Grupo MP';
+      } else {
+        document.title = title + ' - Grupo MP';
+      }
+      
+      currentViewId = viewId;
       setTimeout(redrawCurrentView, 50);
     }
 
