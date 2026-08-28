@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Organigramas - Grupo MP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --navy-main: #182d49;
+      --line-color: #94a3b8;
+      
+      --col-prod: #275680;
+      --col-mant-ind: #527c53;
+      --col-matr: #5c4373;
+      --col-mant-veh: #bf6613;
+      --col-abast: #1b728b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-page);
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5vh 2vw;
+    }
+
+    .main-canvas {
+      width: 100%;
+      min-height: 94vh;
+      background: #ffffff;
+      padding: 25px 40px 35px;
+      border-radius: 16px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* ENCABEZADO */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 0 10px;
+      z-index: 2;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 140px;
+    }
+
+    .logo-img-left, .logo-img-right {
+      height: 80px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .header-titles {
+      text-align: center;
+      flex-grow: 1;
+      padding: 0 20px;
+    }
+
+    .header-titles h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+
+    .header-titles p {
+      font-size: 14.5px;
+      color: #64748b;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* VISTAS */
+    .view-section {
+      display: none;
+      position: relative;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+
+    .view-section.active {
+      display: flex;
+    }
+
+    /* BOTÓN VOLVER (UBICADO DEBAJO DEL ENCABEZADO SIN TAPAR EL LOGO) */
+    .btn-back {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      z-index: 20;
+    }
+
+    .btn-back:hover {
+      background: var(--navy-main);
+      color: #ffffff;
+      border-color: var(--navy-main);
+      transform: translateX(-2px);
+    }
+
+    /* SVG PARA LÍNEAS */
+    .connector-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* POP-UPS */
+    .has-popup {
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      z-index: 10;
+    }
+
+    .has-popup:hover, .has-popup:focus-within {
+      z-index: 99999 !important;
+      transform: translateY(-2px);
+    }
+
+    .popup-box {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      width: 330px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      font-weight: 400;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+      z-index: 100000;
+    }
+
+    .has-popup:hover .popup-box,
+    .has-popup:focus .popup-box {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* NODO SUPERIOR PRINCIPAL (POP-UP HACIA ABAJO) */
+    .node-top-dark {
+      color: white;
+      padding: 18px 32px;
+      border-radius: 14px;
+      width: 500px;
+      text-align: center;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+
+    .node-top-dark h2 {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .node-top-dark .popup-box {
+      top: calc(100% + 12px);
+      bottom: auto;
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    .node-top-dark:hover .popup-box {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Colores para nodos principales */
+    .bg-navy { background-color: var(--navy-main); }
+    .bg-prod { background-color: var(--col-prod); }
+    .bg-mant-ind { background-color: var(--col-mant-ind); }
+    .bg-matr { background-color: var(--col-matr); }
+    .bg-mant-veh { background-color: var(--col-mant-veh); }
+    .bg-abast { background-color: var(--col-abast); }
+
+    /* ZONA MEDIA DEL HOME (STAFF) */
+    .middle-zone-home {
+      position: relative;
+      width: 100%;
+      height: 130px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .node-staff {
+      background: white;
+      border: 1.5px solid #475569;
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      min-width: 210px;
+      max-width: 240px;
+      z-index: 10;
+    }
+
+    .staff-sub {
+      font-size: 10px;
+      font-weight: 700;
+      color: #1e3a8a;
+      letter-spacing: 0.5px;
+    }
+
+    .staff-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-top: 3px;
+    }
+
+    .node-staff .popup-box {
+      bottom: calc(100% + 10px);
+      right: 0;
+      width: 340px;
+    }
+
+    /* GRID HOME (5 ÁREAS) */
+    .areas-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 24px;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .node-area {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      min-height: 110px;
+      cursor: pointer;
+    }
+
+    .node-area:hover {
+      border-color: #94a3b8;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+    }
+
+    .area-bar {
+      height: 8px;
+      width: 100%;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .area-title-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px 10px;
+      flex-grow: 1;
+    }
+
+    .area-title-wrap h3 {
+      font-size: 13.5px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: 0.3px;
+    }
+
+    .node-area .popup-box {
+      bottom: calc(100% + 14px);
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+    }
+
+    .node-area:hover .popup-box {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .card-prod .area-bar { background-color: var(--col-prod); }
+    .card-prod h3 { color: var(--col-prod); }
+    .card-mant-ind .area-bar { background-color: var(--col-mant-ind); }
+    .card-mant-ind h3 { color: var(--col-mant-ind); }
+    .card-matr .area-bar { background-color: var(--col-matr); }
+    .card-matr h3 { color: var(--col-matr); }
+    .card-mant-veh .area-bar { background-color: var(--col-mant-veh); }
+    .card-mant-veh h3 { color: var(--col-mant-veh); }
+    .card-abast .area-bar { background-color: var(--col-abast); }
+    .card-abast h3 { color: var(--col-abast); }
+
+    /* ESTILOS DE TARJETAS BLANCAS DE SUB-NIVELES */
+    .card-sublevel {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px 20px;
+      min-height: 85px;
+      z-index: 10;
+    }
+
+    .card-sublevel h3 {
+      font-size: 13.5px;
+      font-weight: 800;
+      line-height: 1.35;
+      letter-spacing: 0.3px;
+    }
+
+    /* Lista de puestos / sub-roles */
+    .puestos-list {
+      list-style: none;
+      margin-top: 8px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .puestos-list li {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .card-sublevel .popup-box {
+      bottom: calc(100% + 12px);
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+    }
+
+    .card-sublevel:hover .popup-box {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .grid-2-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      width: 80%;
+      z-index: 10;
+    }
+
+    .grid-1-col {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .spacer-zone {
+      height: 70px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-canvas">
+
+    <!-- ENCABEZADO -->
+    <header class="header">
+      <div class="logo-container">
+        <img class="logo-img-left" src="logo-ceramica.png" alt="Cerámica Marcos Paz" onerror="this.onerror=null; this.src='https://dummyimage.com/130x85/ea580c/ffffff&text=CERAMICA+MP';">
+      </div>
+
+      <div class="header-titles">
+        <h1 id="header-main-title">GERENCIA DE PRODUCCIÓN INDUSTRIAL</h1>
+        <p id="header-subtitle">Estructura Organizativa Funcional — Grupo MP</p>
+      </div>
+
+      <div class="logo-container">
+        <img class="logo-img-right" src="logo-grupo.png" alt="Grupo MP" onerror="this.onerror=null; this.src='https://dummyimage.com/85x85/1b2f4f/ffffff&text=GRUPO+MP';">
+      </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- 0. VISTA HOME (GERENCIA GENERAL)          -->
+    <!-- ========================================== -->
+    <div class="view-section active" id="view-home">
+      <svg class="connector-svg" id="svg-home"></svg>
+
+      <div class="node-top-dark bg-navy has-popup" id="home-gerencia" tabindex="0">
+        <h2>GERENCIA DE PRODUCCIÓN INDUSTRIAL</h2>
+        <div class="popup-box">
+          Gestionar integralmente la operación industrial, coordinando la ejecución del proceso productivo, el abastecimiento y disponibilidad de materias primas, y la conservación y disponibilidad de los equipos, instalaciones, maquinaria móvil, herramental y recursos técnicos necesarios para la operación. Orientar la gestión al cumplimiento de los objetivos productivos y de calidad, asegurando la continuidad operativa y la coordinación entre las distintas áreas que intervienen en el proceso.
+        </div>
+      </div>
+
+      <div class="middle-zone-home">
+        <div class="node-staff has-popup" id="home-staff" tabindex="0">
+          <div class="staff-sub">SOPORTE TRANSVERSAL / STAFF</div>
+          <div class="staff-name">INGENIERÍA</div>
+          <div class="popup-box">
+            Brindar soporte técnico transversal a las distintas unidades de negocio del Grupo, desarrollando e implementando proyectos de mejora, optimización y modernización de procesos e instalaciones, con especialización en ingeniería eléctrica, electrónica, mecánica, automatización e instrumentación, y acompañando la incorporación de nuevas tecnologías.
+          </div>
+        </div>
+      </div>
+
+      <div class="areas-container">
+        <div class="node-area card-prod has-popup target-home" onclick="showView('view-prod', 'DEPARTAMENTO DE PRODUCCIÓN')" tabindex="0">
+          <div class="area-bar"></div>
+          <div class="area-title-wrap"><h3>PRODUCCIÓN</h3></div>
+          <div class="popup-box">
+            Asegurar la ejecución del cronograma de producción en tiempo y forma, gestionando los recursos y procesos para alcanzar los volúmenes previstos bajo estándares de calidad, productividad y eficiencia operativa.
+          </div>
+        </div>
+
+        <div class="node-area card-mant-ind has-popup target-home" onclick="showView('view-mant-ind', 'DEPARTAMENTO DE MANTENIMIENTO INDUSTRIAL')" tabindex="0">
+          <div class="area-bar"></div>
+          <div class="area-title-wrap"><h3>MANTENIMIENTO INDUSTRIAL</h3></div>
+          <div class="popup-box">
+            Garantizar disponibilidad y confiabilidad de equipos e instalaciones industriales mediante mantenimiento preventivo, predictivo y correctivo, gestionando repuestos y recursos para la continuidad operativa.
+          </div>
+        </div>
+
+        <div class="node-area card-matr has-popup target-home" onclick="showView('view-matr', 'DEPARTAMENTO DE MATRICERÍA Y TALLER')" tabindex="0">
+          <div class="area-bar"></div>
+          <div class="area-title-wrap"><h3>MATRICERÍA Y TALLER</h3></div>
+          <div class="popup-box">
+            Asegurar disponibilidad de moldes de producción, mediante la fabricación mantenimiento, preparación y puesta a punto de dados, boquillas, y estructura. Brindar soporte de fabricación, mecanizado y reparación metalmecánica desde el taller.
+          </div>
+        </div>
+
+        <div class="node-area card-mant-veh has-popup target-home" onclick="showView('view-mant-veh', 'DEPARTAMENTO DE MANTENIMIENTO VEHICULAR')" tabindex="0">
+          <div class="area-bar"></div>
+          <div class="area-title-wrap"><h3>MANTENIMIENTO VEHICULAR</h3></div>
+          <div class="popup-box">
+            Garantizar disponibilidad y confiabilidad de la flota y equipos móviles mediante planificación y ejecución del mantenimiento preventivo y correctivo, sosteniendo la capacidad de operación.
+          </div>
+        </div>
+
+        <div class="node-area card-abast has-popup target-home" onclick="showView('view-abast', 'DEPARTAMENTO DE ABASTECIMIENTO')" tabindex="0">
+          <div class="area-bar"></div>
+          <div class="area-title-wrap"><h3>ABASTECIMIENTO</h3></div>
+          <div class="popup-box">
+            Asegurar el suministro continuo de materias primas a producción, gestionando de forma eficiente su extracción, preparación, acopio y logística según los requerimientos operativos.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 1. VISTA PRODUCCIÓN                       -->
+    <!-- ========================================== -->
+    <div class="view-section" id="view-prod">
+      <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
+      <svg class="connector-svg" id="svg-prod"></svg>
+
+      <!-- Nivel 1 -->
+      <div class="node-top-dark bg-prod has-popup" id="prod-top" tabindex="0">
+        <h2>ANALISTA DE DATOS Y PROCESOS</h2>
+        <div class="popup-box">
+          Analiza los procesos industriales mediante la gestión de datos, desarrollando indicadores y herramientas de control que permitan detectar desvíos, pérdidas y oportunidades de mejora. Realiza el seguimiento de la información productiva y de consumos, impulsa acciones de mejora y brinda soporte a la toma de decisiones de la Gerencia. Asume la coordinación operativa del área Industrial en ausencia del Gerente.
+        </div>
+      </div>
+
+      <div class="spacer-zone"></div>
+
+      <!-- Nivel 2: Supervisores -->
+      <div class="grid-2-cols" id="prod-mid-grid">
+        <div class="card-sublevel has-popup" id="prod-sup-1" style="border-top: 6px solid var(--col-prod);" tabindex="0">
+          <h3 style="color: var(--col-prod);">SUPERVISORES DE PRODUCCIÓN</h3>
+          <div class="popup-box">
+            Conduce integralmente la operación de la planta durante su turno, coordinando al personal y supervisando el proceso, sus parámetros y las condiciones de equipos e instalaciones. Es responsable del cumplimiento de los objetivos productivos del turno, la continuidad operativa, la calidad, el orden y la seguridad, tomando decisiones ante desvíos y coordinando las intervenciones necesarias con las áreas de soporte.
+          </div>
+        </div>
+
+        <div class="card-sublevel has-popup" id="prod-sup-2" style="border-top: 6px solid var(--col-prod);" tabindex="0">
+          <h3 style="color: var(--col-prod);">SUPERVISOR DE INSUMOS Y VAGONETAS</h3>
+          <div class="popup-box">
+            Asegura la disponibilidad y correcta gestión de los insumos requeridos por Producción, coordinando su recepción, almacenamiento y entrega. Gestiona el mantenimiento y reparación de las vagonetas para garantizar su disponibilidad operativa.
+          </div>
+        </div>
+      </div>
+
+      <div class="spacer-zone"></div>
+
+      <!-- Nivel 3: Operativos -->
+      <div class="grid-2-cols" id="prod-bot-grid">
+        <div class="card-sublevel" id="prod-op-1">
+          <h3 style="color: var(--col-prod);">PERSONAL OPERATIVO</h3>
+          <ul class="puestos-list">
+            <li>Operarios de producción</li>
+            <li>Mantenedores de turno</li>
+            <li>Maquinistas y autoelevadoristas</li>
+            <li>Personal de maestranza de planta</li>
+          </ul>
+        </div>
+
+        <div class="card-sublevel" id="prod-op-2">
+          <h3 style="color: var(--col-prod);">PERSONAL DE MANTENIMIENTO DE VAGONETAS</h3>
+          <ul class="puestos-list">
+            <li>Fumistero</li>
+            <li>Soldador</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. VISTA MANTENIMIENTO INDUSTRIAL         -->
+    <!-- ========================================== -->
+    <div class="view-section" id="view-mant-ind">
+      <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
+      <svg class="connector-svg" id="svg-mant-ind"></svg>
+
+      <!-- Nivel 1 -->
+      <div class="node-top-dark bg-mant-ind has-popup" id="mi-top" tabindex="0">
+        <h2>ANALISTA DE MANTENIMIENTO</h2>
+        <div class="popup-box">
+          Planifica, coordina y controla la gestión de mantenimiento industrial, definiendo y actualizando los planes preventivos, criticidad de equipos y necesidades de repuestos y servicios. Gestiona la información técnica y el sistema de mantenimiento, analiza fallas e indicadores y coordina con Producción las ventanas de intervención, buscando mejorar la disponibilidad y confiabilidad de los equipos.
+        </div>
+      </div>
+
+      <div class="spacer-zone"></div>
+
+      <!-- Nivel 2 -->
+      <div class="grid-1-col">
+        <div class="card-sublevel has-popup" id="mi-mid" style="width: 480px; border-top: 6px solid var(--col-mant-ind);" tabindex="0">
+          <h3 style="color: var(--col-mant-ind);">SUPERVISOR DE MANTENIMIENTO INDUSTRIAL</h3>
+          <div class="popup-box">
+            Supervisa y coordina la ejecución de las tareas de mantenimiento industrial, conduciendo al personal y asegurando la correcta realización de intervenciones preventivas y correctivas. Diagnostica fallas, asigna recursos y coordina con Producción las intervenciones y puestas en marcha, garantizando trabajos seguros, técnicamente adecuados y orientados a recuperar y preservar la disponibilidad de los equipos.
+          </div>
+        </div>
+      </div>
+
+      <div class="spacer-zone"></div>
+
+      <!-- Nivel 3 -->
+      <div class="grid-1-col">
+        <div class="card-sublevel" id="mi-bot" style="width: 480px;">
+          <h3 style="color: var(--col-mant-ind);">PERSONAL DE MANTENIMIENTO</h3>
+          <ul class="puestos-list">
+            <li>Mecánicos</li>
+            <li>Electricistas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. VISTA MATRICERÍA Y TALLER              -->
+    <!-- ========================================== -->
+    <div class="view-section" id="view-matr">
+      <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
+      <svg class="connector-svg" id="svg-matr"></svg>
+
+      <!-- Nivel 1 -->
+      <div class="node-top-dark bg-matr has-popup" id="matr-top" tabindex="0">
+        <h2>SUPERVISOR DE MATRICERÍA</h2>
+        <div class="popup-box">
+          Gestiona la fabricación, mantenimiento, ajuste y disponibilidad de los moldes de producción, asegurando su condición dimensional y funcional y su impacto sobre la calidad y estabilidad del proceso. Analiza problemas de producto y proceso vinculados a matricería, extrusión y materia prima, definiendo ajustes y acciones correctivas, y conduce técnicamente al personal del área. Planifica y supervisa los trabajos de mecanizado, fabricación y reparación metalmecánica realizados desde el taller.
+        </div>
+      </div>
+
+      <div style="height: 120px;"></div>
+
+      <!-- Nivel 2 -->
+      <div class="grid-2-cols" id="matr-bot-grid">
+        <div class="card-sublevel" id="matr-op-1">
+          <h3 style="color: var(--col-matr);">PERSONAL DE MATRICERÍA</h3>
+          <ul class="puestos-list">
+            <li>Matricero de campo</li>
+            <li>Matricero de taller</li>
+          </ul>
+        </div>
+
+        <div class="card-sublevel" id="matr-op-2">
+          <h3 style="color: var(--col-matr);">PERSONAL DE TALLER MECÁNICO</h3>
+          <ul class="puestos-list">
+            <li>Tornero</li>
+            <li>Fresador</li>
+            <li>Soldador</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. VISTA MANTENIMIENTO VEHICULAR          -->
+    <!-- ========================================== -->
+    <div class="view-section" id="view-mant-veh">
+      <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
+      <svg class="connector-svg" id="svg-mant-veh"></svg>
+
+      <!-- Nivel 1 -->
+      <div class="node-top-dark bg-mant-veh has-popup" id="mv-top" tabindex="0">
+        <h2>SUPERVISOR DE MANTENIMIENTO VEHICULAR</h2>
+        <div class="popup-box">
+          Supervisa y coordina el mantenimiento preventivo y correctivo de las unidades móviles del área Industrial, conduciendo al personal y asegurando su disponibilidad, confiabilidad y seguridad. Planifica intervenciones, diagnostica fallas y define su resolución con recursos propios o externos, coordinando con las áreas usuarias las paradas y liberación de las unidades.
+        </div>
+      </div>
+
+      <div style="height: 140px;"></div>
+
+      <!-- Nivel 2 -->
+      <div class="grid-1-col">
+        <div class="card-sublevel" id="mv-bot" style="width: 480px;">
+          <h3 style="color: var(--col-mant-veh);">PERSONAL DE MANTENIMIENTO VEHICULAR</h3>
+          <ul class="puestos-list">
+            <li>Mecánicos vehiculares</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 5. VISTA ABASTECIMIENTO                   -->
+    <!-- ========================================== -->
+    <div class="view-section" id="view-abast">
+      <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
+      <svg class="connector-svg" id="svg-abast"></svg>
+
+      <!-- Nivel 1 -->
+      <div class="node-top-dark bg-abast has-popup" id="abast-top" tabindex="0">
+        <h2>SUPERVISOR DE ABASTECIMIENTO</h2>
+        <div class="popup-box">
+          Supervisa y coordina la extracción, acopio y logística de arcilla necesaria para abastecer a las plantas industriales. Gestiona los recursos de cantera y transporte, propios y de terceros, planificando la extracción y los viajes según las necesidades productivas y asegurando continuidad de abastecimiento, eficiencia operativa y condiciones seguras de trabajo.
+        </div>
+      </div>
+
+      <div style="height: 120px;"></div>
+
+      <!-- Nivel 2 -->
+      <div class="grid-2-cols" id="abast-bot-grid">
+        <div class="card-sublevel" id="abast-op-1">
+          <h3 style="color: var(--col-abast);">PERSONAL OPERATIVO DE CANTERA</h3>
+          <ul class="puestos-list">
+            <li>Maquinistas</li>
+          </ul>
+        </div>
+
+        <div class="card-sublevel" id="abast-op-2">
+          <h3 style="color: var(--col-abast);">PERSONAL DE LOGÍSTICA INTERNA</h3>
+          <ul class="puestos-list">
+            <li>Choferes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT DE NAVEGACIÓN Y CÁLCULO DE LÍNEAS -->
+  <script>
+    let currentViewId = 'view-home';
+
+    function showView(viewId, title) {
+      document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+      const activeView = document.getElementById(viewId);
+      if (activeView) activeView.classList.add('active');
+      
+      document.getElementById('header-main-title').innerText = title;
+      currentViewId = viewId;
+      
+      setTimeout(redrawCurrentView, 50);
+    }
+
+    function redrawCurrentView() {
+      if (currentViewId === 'view-home') drawHomeLines();
+      else if (currentViewId === 'view-prod') drawProdLines();
+      else if (currentViewId === 'view-mant-ind') drawMantIndLines();
+      else if (currentViewId === 'view-matr') drawMatrLines();
+      else if (currentViewId === 'view-mant-veh') drawMantVehLines();
+      else if (currentViewId === 'view-abast') drawAbastLines();
+    }
+
+    // 0. Líneas Home
+    function drawHomeLines() {
+      const svg = document.getElementById('svg-home');
+      const view = document.getElementById('view-home');
+      const topNode = document.getElementById('home-gerencia');
+      const staffNode = document.getElementById('home-staff');
+      const areas = document.querySelectorAll('.target-home');
+
+      if (!svg || !view || !topNode || !staffNode || areas.length === 0) return;
+
+      const vRect = view.getBoundingClientRect();
+      const tRect = topNode.getBoundingClientRect();
+      const sRect = staffNode.getBoundingClientRect();
+
+      const topX = tRect.left + tRect.width / 2 - vRect.left;
+      const topY = tRect.bottom - vRect.top;
+      const staffLeftX = sRect.left - vRect.left;
+      const staffCenterY = sRect.top + sRect.height / 2 - vRect.top;
+
+      const areaPts = Array.from(areas).map(c => {
+        const r = c.getBoundingClientRect();
+        return { x: r.left + r.width / 2 - vRect.left, y: r.top - vRect.top };
+      });
+
+      const busY = areaPts[0].y - 45;
+      let p = '';
+      p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${topX}" y1="${staffCenterY}" x2="${staffLeftX}" y2="${staffCenterY}" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4" />`;
+      p += `<line x1="${areaPts[0].x}" y1="${busY}" x2="${areaPts[areaPts.length - 1].x}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
+      areaPts.forEach(pt => {
+        p += `<line x1="${pt.x}" y1="${busY}" x2="${pt.x}" y2="${pt.y}" stroke="#94a3b8" stroke-width="2" />`;
+      });
+
+      svg.innerHTML = p;
+    }
+
+    // 1. Líneas Producción
+    function drawProdLines() {
+      const svg = document.getElementById('svg-prod');
+      const view = document.getElementById('view-prod');
+      const top = document.getElementById('prod-top');
+      const s1 = document.getElementById('prod-sup-1');
+      const s2 = document.getElementById('prod-sup-2');
+      const o1 = document.getElementById('prod-op-1');
+      const o2 = document.getElementById('prod-op-2');
+
+      if (!svg || !view || !top || !s1 || !s2 || !o1 || !o2) return;
+
+      const v = view.getBoundingClientRect();
+      const t = top.getBoundingClientRect();
+      const rS1 = s1.getBoundingClientRect();
+      const rS2 = s2.getBoundingClientRect();
+      const rO1 = o1.getBoundingClientRect();
+      const rO2 = o2.getBoundingClientRect();
+
+      const topX = t.left + t.width / 2 - v.left;
+      const topY = t.bottom - v.top;
+
+      const s1X = rS1.left + rS1.width / 2 - v.left;
+      const s1TopY = rS1.top - v.top;
+      const s1BotY = rS1.bottom - v.top;
+
+      const s2X = rS2.left + rS2.width / 2 - v.left;
+      const s2TopY = rS2.top - v.top;
+      const s2BotY = rS2.bottom - v.top;
+
+      const o1TopY = rO1.top - v.top;
+      const o2TopY = rO2.top - v.top;
+
+      const bus1Y = s1TopY - 35;
+
+      let p = '';
+      p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${bus1Y}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${s1X}" y1="${bus1Y}" x2="${s2X}" y2="${bus1Y}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${s1X}" y1="${bus1Y}" x2="${s1X}" y2="${s1TopY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${s2X}" y1="${bus1Y}" x2="${s2X}" y2="${s2TopY}" stroke="#94a3b8" stroke-width="2" />`;
+
+      p += `<line x1="${s1X}" y1="${s1BotY}" x2="${s1X}" y2="${o1TopY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${s2X}" y1="${s2BotY}" x2="${s2X}" y2="${o2TopY}" stroke="#94a3b8" stroke-width="2" />`;
+
+      svg.innerHTML = p;
+    }
+
+    // 2. Líneas Mantenimiento Industrial
+    function drawMantIndLines() {
+      const svg = document.getElementById('svg-mant-ind');
+      const view = document.getElementById('view-mant-ind');
+      const top = document.getElementById('mi-top');
+      const mid = document.getElementById('mi-mid');
+      const bot = document.getElementById('mi-bot');
+
+      if (!svg || !view || !top || !mid || !bot) return;
+
+      const v = view.getBoundingClientRect();
+      const t = top.getBoundingClientRect();
+      const m = mid.getBoundingClientRect();
+      const b = bot.getBoundingClientRect();
+
+      const x = t.left + t.width / 2 - v.left;
+      const tBotY = t.bottom - v.top;
+      const mTopY = m.top - v.top;
+      const mBotY = m.bottom - v.top;
+      const bTopY = b.top - v.top;
+
+      let p = '';
+      p += `<line x1="${x}" y1="${tBotY}" x2="${x}" y2="${mTopY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${x}" y1="${mBotY}" x2="${x}" y2="${bTopY}" stroke="#94a3b8" stroke-width="2" />`;
+
+      svg.innerHTML = p;
+    }
+
+    // 3. Líneas Matricería y Taller
+    function drawMatrLines() {
+      const svg = document.getElementById('svg-matr');
+      const view = document.getElementById('view-matr');
+      const top = document.getElementById('matr-top');
+      const o1 = document.getElementById('matr-op-1');
+      const o2 = document.getElementById('matr-op-2');
+
+      if (!svg || !view || !top || !o1 || !o2) return;
+
+      const v = view.getBoundingClientRect();
+      const t = top.getBoundingClientRect();
+      const rO1 = o1.getBoundingClientRect();
+      const rO2 = o2.getBoundingClientRect();
+
+      const topX = t.left + t.width / 2 - v.left;
+      const topY = t.bottom - v.top;
+
+      const o1X = rO1.left + rO1.width / 2 - v.left;
+      const o1TopY = rO1.top - v.top;
+
+      const o2X = rO2.left + rO2.width / 2 - v.left;
+      const o2TopY = rO2.top - v.top;
+
+      const busY = o1TopY - 50;
+
+      let p = '';
+      p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${o1X}" y1="${busY}" x2="${o2X}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${o1X}" y1="${busY}" x2="${o1X}" y2="${o1TopY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${o2X}" y1="${busY}" x2="${o2X}" y2="${o2TopY}" stroke="#94a3b8" stroke-width="2" />`;
+
+      svg.innerHTML = p;
+    }
+
+    // 4. Líneas Mantenimiento Vehicular
+    function drawMantVehLines() {
+      const svg = document.getElementById('svg-mant-veh');
+      const view = document.getElementById('view-mant-veh');
+      const top = document.getElementById('mv-top');
+      const bot = document.getElementById('mv-bot');
+
+      if (!svg || !view || !top || !bot) return;
+
+      const v = view.getBoundingClientRect();
+      const t = top.getBoundingClientRect();
+      const b = bot.getBoundingClientRect();
+
+      const x = t.left + t.width / 2 - v.left;
+      const tBotY = t.bottom - v.top;
+      const bTopY = b.top - v.top;
+
+      let p = '';
+      p += `<line x1="${x}" y1="${tBotY}" x2="${x}" y2="${bTopY}" stroke="#94a3b8" stroke-width="2" />`;
+
+      svg.innerHTML = p;
+    }
+
+    // 5. Líneas Abastecimiento
+    function drawAbastLines() {
+      const svg = document.getElementById('svg-abast');
+      const view = document.getElementById('view-abast');
+      const top = document.getElementById('abast-top');
+      const o1 = document.getElementById('abast-op-1');
+      const o2 = document.getElementById('abast-op-2');
+
+      if (!svg || !view || !top || !o1 || !o2) return;
+
+      const v = view.getBoundingClientRect();
+      const t = top.getBoundingClientRect();
+      const rO1 = o1.getBoundingClientRect();
+      const rO2 = o2.getBoundingClientRect();
+
+      const topX = t.left + t.width / 2 - v.left;
+      const topY = t.bottom - v.top;
+
+      const o1X = rO1.left + rO1.width / 2 - v.left;
+      const o1TopY = rO1.top - v.top;
+
+      const o2X = rO2.left + rO2.width / 2 - v.left;
+      const o2TopY = rO2.top - v.top;
+
+      const busY = o1TopY - 50;
+
+      let p = '';
+      p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${o1X}" y1="${busY}" x2="${o2X}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${o1X}" y1="${busY}" x2="${o1X}" y2="${o1TopY}" stroke="#94a3b8" stroke-width="2" />`;
+      p += `<line x1="${o2X}" y1="${busY}" x2="${o2X}" y2="${o2TopY}" stroke="#94a3b8" stroke-width="2" />`;
+
+      svg.innerHTML = p;
+    }
+
+    window.addEventListener('load', redrawCurrentView);
+    window.addEventListener('resize', redrawCurrentView);
+    setTimeout(redrawCurrentView, 200);
+  </script>
+
+</body>
+</html>
