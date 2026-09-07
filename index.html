@@ -56,6 +56,71 @@
       justify-content: space-between;
     }
 
+    /* BANNER DE SUGERENCIA DE ROTACIÓN */
+    .orientation-tip {
+      display: none;
+      background: linear-gradient(135deg, #182d49 0%, #275680 100%);
+      color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 20px rgba(24, 45, 73, 0.18);
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+
+    .tip-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.45;
+    }
+
+    .tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      animation: rotateHint 2.5s infinite ease-in-out;
+    }
+
+    @keyframes rotateHint {
+      0%, 100% { transform: rotate(0deg); }
+      40% { transform: rotate(-90deg); }
+      60% { transform: rotate(-90deg); }
+    }
+
+    .tip-close {
+      background: rgba(255, 255, 255, 0.18);
+      border: none;
+      color: #ffffff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      transition: background 0.2s ease;
+    }
+
+    .tip-close:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Se muestra automáticamente solo en pantallas táctiles/móviles en formato vertical */
+    @media screen and (max-width: 992px) and (orientation: portrait) {
+      .orientation-tip {
+        display: flex;
+      }
+    }
+
     /* ENCABEZADO */
     .header {
       display: flex;
@@ -173,9 +238,7 @@
       transform: translateY(-2px);
     }
 
-    /* ========================================================
-       DISEÑO DE TARJETA FLOTANTE INTEGRADA AL "TODO" (BLANCA)
-       ======================================================== */
+    /* DISEÑO DE TARJETA FLOTANTE INTEGRADA */
     .popup-box {
       visibility: hidden;
       opacity: 0;
@@ -198,7 +261,6 @@
       text-align: left;
     }
 
-    /* Etiqueta superior del pop-up (hereda el título) */
     .popup-tag {
       display: block;
       font-size: 10px;
@@ -209,7 +271,6 @@
       margin-bottom: 6px;
     }
 
-    /* Flecha con borde coordinado */
     .popup-box::before {
       content: '';
       position: absolute;
@@ -221,7 +282,6 @@
       z-index: 2;
     }
 
-    /* Transición al mostrarse */
     .has-popup:hover .popup-box,
     .has-popup:focus .popup-box,
     .has-popup:focus-within .popup-box {
@@ -229,7 +289,7 @@
       opacity: 1;
     }
 
-    /* 1. NODO SUPERIOR (Despliega hacia abajo + Flecha apuntando arriba) */
+    /* NODO SUPERIOR */
     .node-top-dark {
       color: white;
       padding: 18px 32px;
@@ -268,25 +328,6 @@
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    /* Acento de color en pop-ups superiores según departamento */
-    #home-gerencia .popup-box { border-top-color: var(--navy-main); }
-    #home-gerencia .popup-tag { color: var(--navy-main); }
-
-    #prod-top .popup-box { border-top-color: var(--col-prod); }
-    #prod-top .popup-tag { color: var(--col-prod); }
-
-    #mi-top .popup-box { border-top-color: var(--col-mant-ind); }
-    #mi-top .popup-tag { color: var(--col-mant-ind); }
-
-    #matr-top .popup-box { border-top-color: var(--col-matr); }
-    #matr-top .popup-tag { color: var(--col-matr); }
-
-    #mv-top .popup-box { border-top-color: var(--col-mant-veh); }
-    #mv-top .popup-tag { color: var(--col-mant-veh); }
-
-    #abast-top .popup-box { border-top-color: var(--col-abast); }
-    #abast-top .popup-tag { color: var(--col-abast); }
-
     /* Colores para nodos principales */
     .bg-navy { background-color: var(--navy-main); }
     .bg-prod { background-color: var(--col-prod); }
@@ -295,7 +336,7 @@
     .bg-mant-veh { background-color: var(--col-mant-veh); }
     .bg-abast { background-color: var(--col-abast); }
 
-    /* 2. STAFF LATERAL (Despliega hacia arriba + Flecha apuntando abajo) */
+    /* STAFF LATERAL */
     .middle-zone-home {
       position: relative;
       width: 100%;
@@ -356,7 +397,7 @@
       transform: translateY(0) scale(1);
     }
 
-    /* 3. TARJETAS INFERIORES DE ÁREA (Despliegan hacia arriba + Flecha apuntando abajo) */
+    /* TARJETAS INFERIORES DE ÁREA */
     .areas-container {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -403,7 +444,6 @@
       letter-spacing: 0.3px;
     }
 
-    /* Pop-up de área centrado por defecto */
     .node-area .popup-box {
       bottom: calc(100% + 14px);
       top: auto;
@@ -424,7 +464,6 @@
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    /* Ajuste para primera tarjeta (Producción - extrema izquierda) */
     .card-prod .popup-box {
       left: 0;
       transform: translateY(6px) scale(0.97);
@@ -439,22 +478,10 @@
       transform: translateY(0) scale(1);
     }
 
-    /* Mantenimiento Industrial */
-    .card-mant-ind .popup-box {
-      border-top: 4px solid var(--col-mant-ind);
-    }
+    .card-mant-ind .popup-box { border-top: 4px solid var(--col-mant-ind); }
+    .card-matr .popup-box { border-top: 4px solid var(--col-matr); }
+    .card-mant-veh .popup-box { border-top: 4px solid var(--col-mant-veh); }
 
-    /* Matricería */
-    .card-matr .popup-box {
-      border-top: 4px solid var(--col-matr);
-    }
-
-    /* Vehicular */
-    .card-mant-veh .popup-box {
-      border-top: 4px solid var(--col-mant-veh);
-    }
-
-    /* Ajuste para última tarjeta (Abastecimiento - extrema derecha) */
     .card-abast .popup-box {
       left: auto;
       right: 0;
@@ -482,7 +509,7 @@
     .card-abast .area-bar { background-color: var(--col-abast); }
     .card-abast h3 { color: var(--col-abast); }
 
-    /* 4. TARJETAS DE SUB-NIVELES */
+    /* TARJETAS DE SUB-NIVELES */
     .card-sublevel {
       background: #ffffff;
       border: 1px solid #cbd5e1;
@@ -544,12 +571,8 @@
       transform: translateX(-50%) translateY(0) scale(1);
     }
 
-    /* Colores temáticos en pop-ups de sub-niveles */
     #prod-sup-1 .popup-box, #prod-sup-2 .popup-box { border-top: 4px solid var(--col-prod); }
-    #prod-sup-1 .popup-tag, #prod-sup-2 .popup-tag { color: var(--col-prod); }
-
     #mi-mid .popup-box { border-top: 4px solid var(--col-mant-ind); }
-    #mi-mid .popup-tag { color: var(--col-mant-ind); }
 
     .grid-2-cols {
       display: grid;
@@ -566,7 +589,6 @@
       z-index: 10;
     }
 
-    /* Espaciadores ajustados a la jerarquía visual */
     .spacer-3levels {
       height: 60px;
       width: 100%;
@@ -577,17 +599,21 @@
       width: 100%;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 992px) {
+    /* ========================================================
+       RESPONSIVE DESIGN (MÓVILES Y PANTALLAS TÁCTILES)
+       ======================================================== */
+
+    /* Modo Móvil Vertical (Portrait) */
+    @media screen and (max-width: 992px) and (orientation: portrait) {
       body {
-        padding: 10px;
+        padding: 12px 10px;
         min-height: 100vh;
         justify-content: flex-start;
       }
 
       .main-canvas {
         min-height: auto;
-        padding: 20px 15px;
+        padding: 20px 16px 30px;
         border-radius: 12px;
       }
 
@@ -595,32 +621,28 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 10px;
+        gap: 12px;
         margin-bottom: 20px;
       }
 
-      .logo-container {
-        min-width: auto;
-      }
-
       .logo-img-left, .logo-img-right {
-        height: 50px;
-        max-width: 90px;
+        height: 52px;
+        max-width: 95px;
       }
 
       .header-titles {
         width: 100%;
         order: 3;
         padding: 0;
-        margin-top: 5px;
+        margin-top: 4px;
       }
 
       .header-titles h1 {
-        font-size: 19px;
+        font-size: 20px;
       }
 
       .header-titles p {
-        font-size: 12px;
+        font-size: 12.5px;
       }
 
       .connector-svg {
@@ -629,22 +651,18 @@
 
       .btn-back {
         position: static;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         align-self: flex-start;
       }
 
       .node-top-dark {
         width: 100%;
-        padding: 16px;
-      }
-
-      .node-top-dark h2 {
-        font-size: 14px;
+        padding: 18px 16px;
       }
 
       .middle-zone-home {
         height: auto;
-        margin: 15px 0;
+        margin: 18px 0;
         justify-content: center;
       }
 
@@ -655,17 +673,17 @@
 
       .areas-container {
         grid-template-columns: 1fr;
-        gap: 12px;
-        margin-top: 10px;
+        gap: 14px;
+        margin-top: 8px;
       }
 
       .node-area {
-        min-height: 70px;
+        min-height: 75px;
       }
 
       .grid-2-cols {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 16px;
         width: 100%;
       }
 
@@ -674,18 +692,20 @@
       }
 
       .spacer-3levels, .spacer-2levels {
-        height: 15px;
+        height: 16px;
       }
 
+      /* En móvil vertical, los popups se abren tipo tarjeta modal accesible */
       .popup-box {
-        width: calc(100vw - 40px);
+        width: calc(100vw - 44px) !important;
         left: 50% !important;
         right: auto !important;
         transform: translateX(-50%) !important;
         font-size: 12px;
-        padding: 14px;
-        max-height: 50vh;
+        padding: 14px 16px;
+        max-height: 45vh;
         overflow-y: auto;
+        pointer-events: auto;
       }
 
       .popup-box::before {
@@ -694,13 +714,77 @@
 
       .node-area .popup-box,
       .card-sublevel .popup-box {
-        bottom: calc(100% + 8px);
+        bottom: calc(100% + 10px);
         top: auto;
       }
 
       .node-top-dark .popup-box {
-        top: calc(100% + 8px);
+        top: calc(100% + 10px);
         bottom: auto;
+      }
+    }
+
+    /* Modo Móvil Horizontal (Landscape) */
+    @media screen and (max-width: 992px) and (orientation: landscape) {
+      body {
+        padding: 10px;
+        min-height: 100vh;
+      }
+
+      .main-canvas {
+        min-height: 96vh;
+        padding: 16px 24px;
+        overflow-x: auto;
+      }
+
+      .header {
+        margin-bottom: 12px;
+      }
+
+      .logo-img-left, .logo-img-right {
+        height: 46px;
+      }
+
+      .header-titles h1 {
+        font-size: 18px;
+      }
+
+      .header-titles p {
+        font-size: 11px;
+      }
+
+      .node-top-dark {
+        padding: 12px 20px;
+        width: 440px;
+      }
+
+      .node-top-dark h2 {
+        font-size: 13.5px;
+      }
+
+      .middle-zone-home {
+        height: 80px;
+      }
+
+      .node-staff {
+        padding: 8px 12px;
+        min-width: 180px;
+      }
+
+      .node-area {
+        min-height: 80px;
+      }
+
+      .area-title-wrap h3 {
+        font-size: 11.5px;
+      }
+
+      .spacer-3levels {
+        height: 35px;
+      }
+
+      .spacer-2levels {
+        height: 70px;
       }
     }
   </style>
@@ -708,6 +792,15 @@
 <body>
 
   <div class="main-canvas">
+
+    <!-- AVISO DE SUGERENCIA DE ORIENTACIÓN PARA MÓVILES -->
+    <div id="orientation-tip" class="orientation-tip">
+      <div class="tip-content">
+        <span class="tip-icon">🔄</span>
+        <span>Para apreciar el organigrama completo con sus líneas conectadas, te sugerimos rotar el celular a posición horizontal.</span>
+      </div>
+      <button class="tip-close" onclick="dismissOrientationTip()" title="Cerrar sugerencia">✕</button>
+    </div>
 
     <!-- ENCABEZADO -->
     <header class="header">
@@ -1008,9 +1101,14 @@
 
   </div>
 
-  <!-- SCRIPT DE NAVEGACIÓN Y CÁLCULO DE LÍNEAS -->
+  <!-- SCRIPT DE NAVEGACIÓN, ROTACIÓN Y CÁLCULO DE LÍNEAS -->
   <script>
     let currentViewId = 'view-home';
+
+    function dismissOrientationTip() {
+      const tip = document.getElementById('orientation-tip');
+      if (tip) tip.style.display = 'none';
+    }
 
     function showView(viewId, title) {
       document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
@@ -1030,7 +1128,8 @@
     }
 
     function redrawCurrentView() {
-      if (window.innerWidth <= 992) {
+      // En pantalla móvil vertical ocultamos líneas automáticas para evitar superposiciones
+      if (window.innerWidth <= 992 && window.matchMedia('(orientation: portrait)').matches) {
         document.querySelectorAll('.connector-svg').forEach(svg => svg.innerHTML = '');
         return;
       }
@@ -1247,8 +1346,12 @@
       svg.innerHTML = p;
     }
 
+    // Escuchas de eventos para redibujar en cambios de orientación o tamaño
     window.addEventListener('load', redrawCurrentView);
     window.addEventListener('resize', redrawCurrentView);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(redrawCurrentView, 250);
+    });
     setTimeout(redrawCurrentView, 200);
   </script>
 
