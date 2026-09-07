@@ -18,15 +18,13 @@
       --col-matr: #5c4373;
       --col-mant-veh: #bf6613;
       --col-abast: #1b728b;
-
-      --popup-bg: #ffffff;
-      --popup-border: #cbd5e1;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -39,9 +37,127 @@
       justify-content: center;
       align-items: center;
       padding: 1.5vh 2vw;
-      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
+    /* ============================================================ */
+    /* BLOQUEO EN MODO VERTICAL (SOLICITA ROTAR A HORIZONTAL)       */
+    /* ============================================================ */
+    #landscape-blocker {
+      display: none;
+    }
+
+    @media screen and (max-width: 1024px) and (orientation: portrait) {
+      #landscape-blocker {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #0f172a;
+        color: #f8fafc;
+        z-index: 9999999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        text-align: center;
+      }
+
+      .blocker-container {
+        max-width: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .icon-wrapper {
+        position: relative;
+        width: 76px;
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 6px;
+      }
+
+      .phone-svg {
+        width: 50px;
+        height: 50px;
+        fill: none;
+        stroke: #38bdf8;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        animation: rotateCycle 2.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+      }
+
+      .rotation-arrow {
+        position: absolute;
+        width: 74px;
+        height: 74px;
+        border: 2px dashed rgba(148, 163, 184, 0.35);
+        border-radius: 50%;
+        border-top-color: #38bdf8;
+        animation: spinOrbit 4s infinite linear;
+      }
+
+      .badge-rot {
+        display: inline-block;
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+      }
+
+      .blocker-container h2 {
+        font-size: 21px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 0.3px;
+      }
+
+      .blocker-container p {
+        font-size: 13.5px;
+        line-height: 1.55;
+        color: #94a3b8;
+        font-weight: 500;
+      }
+
+      .hint-box {
+        margin-top: 8px;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        padding: 9px 14px;
+        font-size: 11.5px;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      @keyframes rotateCycle {
+        0%, 15% { transform: rotate(0deg); }
+        50%, 65% { transform: rotate(-90deg); }
+        90%, 100% { transform: rotate(0deg); }
+      }
+
+      @keyframes spinOrbit {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    }
+
+    /* LIENZO PRINCIPAL */
     .main-canvas {
       width: 100%;
       min-height: 94vh;
@@ -55,139 +171,47 @@
       justify-content: space-between;
     }
 
-    /* BANNER DE SUGERENCIA DE ROTACIÓN EN CELULARES */
-    .orientation-tip {
-      display: none;
-      background: linear-gradient(135deg, #182d49 0%, #275680 100%);
-      color: #ffffff;
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 20px rgba(24, 45, 73, 0.18);
-      z-index: 50;
-      transition: all 0.3s ease;
-    }
-
-    .tip-content {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      line-height: 1.45;
-    }
-
-    .tip-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-      animation: rotateHint 2.5s infinite ease-in-out;
-    }
-
-    @keyframes rotateHint {
-      0%, 100% { transform: rotate(0deg); }
-      40% { transform: rotate(-90deg); }
-      60% { transform: rotate(-90deg); }
-    }
-
-    .tip-close {
-      background: rgba(255, 255, 255, 0.18);
-      border: none;
-      color: #ffffff;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      flex-shrink: 0;
-      transition: background 0.2s ease;
-    }
-
-    .tip-close:hover {
-      background: rgba(255, 255, 255, 0.35);
-    }
-
     /* ENCABEZADO */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       padding: 0 10px;
       z-index: 2;
-      gap: 15px;
-      position: relative;
     }
 
     .logo-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 120px;
+      min-width: 130px;
     }
 
     .logo-img-left, .logo-img-right {
-      height: 75px;
+      height: 72px;
       width: auto;
-      max-width: 130px;
       object-fit: contain;
     }
 
     .header-titles {
       text-align: center;
       flex-grow: 1;
-      padding: 0 15px;
+      padding: 0 20px;
     }
 
     .header-titles h1 {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: 0.5px;
-      line-height: 1.2;
     }
 
     .header-titles p {
-      font-size: 14px;
+      font-size: 13.5px;
       color: #64748b;
-      margin-top: 4px;
+      margin-top: 3px;
       font-weight: 500;
-    }
-
-    /* BOTÓN VOLVER */
-    .btn-back {
-      position: absolute;
-      top: 0;
-      left: 10px;
-      background: #ffffff;
-      color: #334155;
-      border: 1.5px solid #cbd5e1;
-      padding: 7px 16px;
-      border-radius: 8px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-      z-index: 30;
-    }
-
-    .btn-back:hover {
-      background: var(--navy-main);
-      color: #ffffff;
-      border-color: var(--navy-main);
-      transform: translateX(-3px);
-      box-shadow: 0 4px 12px rgba(24, 45, 73, 0.18);
     }
 
     /* VISTAS */
@@ -205,7 +229,35 @@
       display: flex;
     }
 
-    /* SVG PARA LÍNEAS CONECTORAS */
+    /* BOTÓN VOLVER */
+    .btn-back {
+      position: absolute;
+      top: 0;
+      left: 10px;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      z-index: 25;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .btn-back:hover {
+      background: var(--navy-main);
+      color: #ffffff;
+      border-color: var(--navy-main);
+    }
+
+    /* CONECTOR SVG */
     .connector-svg {
       position: absolute;
       top: 0;
@@ -216,51 +268,45 @@
       z-index: 1;
     }
 
-    /* POP-UPS FLOTANTES (SOLO EN PC CON MOUSE) */
+    /* POP-UPS EN ESCRITORIO (MOUSE HOVER) */
     .has-popup {
       position: relative;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       z-index: 10;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .has-popup:hover, .has-popup:focus, .has-popup:focus-within {
-        z-index: 99999 !important;
-        transform: translateY(-2px);
-      }
+    .has-popup:hover, .has-popup:focus-within {
+      z-index: 99999 !important;
+      transform: translateY(-2px);
     }
 
     .popup-box {
       visibility: hidden;
       opacity: 0;
       position: absolute;
-      width: 330px;
+      width: 320px;
       background: #ffffff;
-      border: 1px solid #cbd5e1;
       color: #334155;
       padding: 16px 18px;
       border-radius: 12px;
-      font-size: 12.5px;
+      border: 1px solid #cbd5e1;
+      font-size: 12px;
       line-height: 1.55;
       font-weight: 500;
-      box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.16), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04);
       pointer-events: none;
-      transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                  visibility 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                  transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
       z-index: 100000;
       text-align: left;
     }
 
     .popup-tag {
       display: block;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 800;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      color: #64748b;
       margin-bottom: 6px;
     }
 
@@ -272,60 +318,84 @@
       background: #ffffff;
       border: 1px solid #cbd5e1;
       transform: rotate(45deg);
-      z-index: 2;
+      z-index: -1;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .has-popup:hover .popup-box,
-      .has-popup:focus .popup-box,
-      .has-popup:focus-within .popup-box {
-        visibility: visible;
-        opacity: 1;
-      }
+    /* Puntero hacia arriba */
+    .popup-top {
+      bottom: calc(100% + 14px);
+      top: auto;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
     }
 
-    /* NODO SUPERIOR */
-    .node-top-dark {
-      color: white;
-      padding: 18px 32px;
-      border-radius: 14px;
-      width: 500px;
-      max-width: 100%;
-      text-align: center;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
-      z-index: 10;
+    .popup-top::before {
+      bottom: -7px;
+      left: calc(50% - 6px);
+      border-top: none;
+      border-left: none;
     }
 
-    .node-top-dark h2 {
-      font-size: 15.5px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
+    .has-popup:hover .popup-top,
+    .has-popup:focus .popup-top {
+      visibility: visible;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
-    .node-top-dark .popup-box {
+    /* Puntero hacia abajo */
+    .popup-bottom {
       top: calc(100% + 14px);
       bottom: auto;
       left: 50%;
-      transform: translateX(-50%) translateY(-6px) scale(0.97);
-      border-top: 4px solid var(--navy-main);
+      transform: translateX(-50%) translateY(-6px);
     }
 
-    .node-top-dark .popup-box::before {
+    .popup-bottom::before {
       top: -7px;
-      left: 50%;
-      margin-left: -6px;
+      left: calc(50% - 6px);
       border-bottom: none;
       border-right: none;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .node-top-dark:hover .popup-box,
-      .node-top-dark:focus .popup-box {
-        transform: translateX(-50%) translateY(0) scale(1);
-      }
+    .has-popup:hover .popup-bottom,
+    .has-popup:focus .popup-bottom {
+      visibility: visible;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
-    /* COLORES DE CABECERA */
+    /* Colores temáticos de bordes y etiquetas */
+    .pop-navy { border-top: 4px solid var(--navy-main); }
+    .pop-navy .popup-tag { color: var(--navy-main); }
+    .pop-prod { border-top: 4px solid var(--col-prod); }
+    .pop-prod .popup-tag { color: var(--col-prod); }
+    .pop-mant-ind { border-top: 4px solid var(--col-mant-ind); }
+    .pop-mant-ind .popup-tag { color: var(--col-mant-ind); }
+    .pop-matr { border-top: 4px solid var(--col-matr); }
+    .pop-matr .popup-tag { color: var(--col-matr); }
+    .pop-mant-veh { border-top: 4px solid var(--col-mant-veh); }
+    .pop-mant-veh .popup-tag { color: var(--col-mant-veh); }
+    .pop-abast { border-top: 4px solid var(--col-abast); }
+    .pop-abast .popup-tag { color: var(--col-abast); }
+
+    /* NODOS SUPERIORES PRINCIPALES */
+    .node-top-dark {
+      color: white;
+      padding: 16px 28px;
+      border-radius: 12px;
+      width: 480px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      z-index: 10;
+    }
+
+    .node-top-dark h2 {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
     .bg-navy { background-color: var(--navy-main); }
     .bg-prod { background-color: var(--col-prod); }
     .bg-mant-ind { background-color: var(--col-mant-ind); }
@@ -333,11 +403,11 @@
     .bg-mant-veh { background-color: var(--col-mant-veh); }
     .bg-abast { background-color: var(--col-abast); }
 
-    /* STAFF LATERAL */
+    /* ZONA MEDIA HOME */
     .middle-zone-home {
       position: relative;
       width: 100%;
-      height: 130px;
+      height: 120px;
       display: flex;
       justify-content: flex-end;
       align-items: center;
@@ -347,7 +417,7 @@
       background: white;
       border: 1.5px solid #475569;
       border-radius: 10px;
-      padding: 12px 16px;
+      padding: 12px 18px;
       text-align: center;
       box-shadow: 0 4px 14px rgba(0,0,0,0.05);
       min-width: 210px;
@@ -363,40 +433,28 @@
     }
 
     .staff-name {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 800;
       color: #1e3a8a;
       margin-top: 3px;
     }
 
-    .node-staff .popup-box {
-      bottom: calc(100% + 14px);
+    .node-staff .popup-top {
       right: 0;
-      width: 340px;
-      transform: translateY(6px) scale(0.97);
-      border-top: 4px solid #1e3a8a;
-    }
-
-    .node-staff .popup-tag {
-      color: #1e3a8a;
-    }
-
-    .node-staff .popup-box::before {
-      bottom: -7px;
-      right: 45px;
       left: auto;
-      border-top: none;
-      border-left: none;
+      transform: translateY(6px);
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .node-staff:hover .popup-box,
-      .node-staff:focus .popup-box {
-        transform: translateY(0) scale(1);
-      }
+    .node-staff .popup-top::before {
+      left: auto;
+      right: 25px;
     }
 
-    /* TARJETAS INFERIORES DE ÁREA (HOME) */
+    .node-staff:hover .popup-top {
+      transform: translateY(0);
+    }
+
+    /* GRID DE ÁREAS */
     .areas-container {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -432,7 +490,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 16px 10px;
+      padding: 14px 10px;
       flex-grow: 1;
     }
 
@@ -441,66 +499,6 @@
       font-weight: 800;
       line-height: 1.35;
       letter-spacing: 0.3px;
-    }
-
-    .node-area .popup-box {
-      bottom: calc(100% + 14px);
-      top: auto;
-      left: 50%;
-      transform: translateX(-50%) translateY(6px) scale(0.97);
-    }
-
-    .node-area .popup-box::before {
-      bottom: -7px;
-      left: 50%;
-      margin-left: -6px;
-      border-top: none;
-      border-left: none;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .node-area:hover .popup-box,
-      .node-area:focus .popup-box {
-        transform: translateX(-50%) translateY(0) scale(1);
-      }
-    }
-
-    .card-prod .popup-box {
-      left: 0;
-      transform: translateY(6px) scale(0.97);
-      border-top: 4px solid var(--col-prod);
-    }
-    .card-prod .popup-box::before {
-      left: 45px;
-      margin-left: 0;
-    }
-    @media (hover: hover) and (pointer: fine) {
-      .card-prod:hover .popup-box,
-      .card-prod:focus .popup-box {
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .card-mant-ind .popup-box { border-top: 4px solid var(--col-mant-ind); }
-    .card-matr .popup-box { border-top: 4px solid var(--col-matr); }
-    .card-mant-veh .popup-box { border-top: 4px solid var(--col-mant-veh); }
-
-    .card-abast .popup-box {
-      left: auto;
-      right: 0;
-      transform: translateY(6px) scale(0.97);
-      border-top: 4px solid var(--col-abast);
-    }
-    .card-abast .popup-box::before {
-      left: auto;
-      right: 45px;
-      margin-left: 0;
-    }
-    @media (hover: hover) and (pointer: fine) {
-      .card-abast:hover .popup-box,
-      .card-abast:focus .popup-box {
-        transform: translateY(0) scale(1);
-      }
     }
 
     .card-prod .area-bar { background-color: var(--col-prod); }
@@ -543,52 +541,23 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       width: 100%;
     }
 
     .puestos-list li {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       color: #475569;
       background: #f1f5f9;
-      padding: 5px 8px;
+      padding: 4px 8px;
       border-radius: 6px;
-      text-align: center;
     }
-
-    .card-sublevel .popup-box {
-      bottom: calc(100% + 14px);
-      top: auto;
-      left: 50%;
-      transform: translateX(-50%) translateY(6px) scale(0.97);
-    }
-
-    .card-sublevel .popup-box::before {
-      bottom: -7px;
-      left: 50%;
-      margin-left: -6px;
-      border-top: none;
-      border-left: none;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .card-sublevel:hover .popup-box,
-      .card-sublevel:focus .popup-box {
-        transform: translateX(-50%) translateY(0) scale(1);
-      }
-    }
-
-    #prod-sup-1 .popup-box, #prod-sup-2 .popup-box, #prod-op-1 .popup-box, #prod-op-2 .popup-box { border-top: 4px solid var(--col-prod); }
-    #mi-mid .popup-box, #mi-bot .popup-box { border-top: 4px solid var(--col-mant-ind); }
-    #matr-op-1 .popup-box, #matr-op-2 .popup-box { border-top: 4px solid var(--col-matr); }
-    #mv-bot .popup-box { border-top: 4px solid var(--col-mant-veh); }
-    #abast-op-1 .popup-box, #abast-op-2 .popup-box { border-top: 4px solid var(--col-abast); }
 
     .grid-2-cols {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      gap: 45px;
       width: 80%;
       z-index: 10;
     }
@@ -600,18 +569,19 @@
       z-index: 10;
     }
 
-    .spacer-3levels {
+    .spacer-zone {
       height: 60px;
       width: 100%;
     }
 
-    .spacer-2levels {
-      height: 140px;
-      width: 100%;
+    .spacer-2lvl {
+      height: 120px;
     }
 
-    /* MODAL / BOTTOM SHEET TÁCTIL PARA CELULARES Y TABLETS (VERTICAL Y HORIZONTAL) */
-    .mobile-backdrop {
+    /* ============================================================ */
+    /* MODAL TÁCTIL (BOTTOM SHEET)                                  */
+    /* ============================================================ */
+    .touch-modal-backdrop {
       display: none;
       position: fixed;
       top: 0;
@@ -620,380 +590,133 @@
       height: 100vh;
       background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(4px);
-      z-index: 999990;
+      z-index: 1000000;
+      align-items: flex-end;
+      justify-content: center;
       opacity: 0;
       transition: opacity 0.25s ease;
     }
 
-    .mobile-backdrop.active {
-      display: block;
+    .touch-modal-backdrop.active {
+      display: flex;
       opacity: 1;
     }
 
-    .mobile-drawer {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100vw;
-      max-height: 85vh;
+    .touch-modal-card {
       background: #ffffff;
-      border-radius: 20px 20px 0 0;
-      box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.25);
-      z-index: 999999;
-      padding: 22px 22px 26px;
-      transform: translateY(100%);
-      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+      max-width: 650px;
+      max-height: 85vh;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.2);
+      padding: 16px 20px 20px;
+      display: flex;
       flex-direction: column;
-      gap: 12px;
+      position: relative;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       overflow-y: auto;
     }
 
-    .mobile-drawer.active {
-      display: flex;
+    .touch-modal-backdrop.active .touch-modal-card {
       transform: translateY(0);
     }
 
-    .mobile-drawer-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      border-bottom: 1.5px solid #e2e8f0;
-      padding-bottom: 10px;
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      align-self: center;
+      margin-bottom: 12px;
     }
 
-    .mobile-drawer-tag {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
-      color: #64748b;
-    }
-
-    .mobile-drawer-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: #0f172a;
-      margin-top: 3px;
-      line-height: 1.25;
-    }
-
-    .mobile-drawer-close {
+    .modal-close-btn {
+      position: absolute;
+      top: 14px;
+      right: 16px;
       background: #f1f5f9;
       border: none;
-      color: #475569;
-      width: 34px;
-      height: 34px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #64748b;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+    }
+
+    .modal-title-tag {
+      font-size: 11px;
       font-weight: 800;
-      flex-shrink: 0;
-      transition: background 0.2s ease;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--navy-main);
+      margin-bottom: 4px;
+      padding-right: 36px;
     }
 
-    .mobile-drawer-close:active {
-      background: #e2e8f0;
-    }
-
-    .mobile-drawer-body {
+    .modal-desc-body {
       font-size: 13px;
-      line-height: 1.6;
+      line-height: 1.55;
       color: #334155;
+      margin-top: 6px;
       font-weight: 500;
-      max-height: 50vh;
-      overflow-y: auto;
     }
 
-    .mobile-drawer-btn {
-      margin-top: 6px;
-      width: 100%;
-      padding: 13px 18px;
-      border-radius: 10px;
-      border: none;
+    .modal-btn-action {
+      margin-top: 16px;
+      padding: 11px 18px;
+      border-radius: 8px;
       background: var(--navy-main);
       color: #ffffff;
       font-family: 'Montserrat', sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
+      border: none;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(24, 45, 73, 0.2);
-      transition: all 0.2s ease;
-    }
-
-    .mobile-drawer-btn:active {
-      transform: scale(0.98);
-    }
-
-    /* MEDIA QUERIES RESPONSIVE */
-
-    /* 1. MÓVIL EN FORMATO VERTICAL (PORTRAIT) */
-    @media screen and (max-width: 992px) and (orientation: portrait) {
-      body {
-        padding: 12px 10px;
-        min-height: 100vh;
-        justify-content: flex-start;
-      }
-
-      .main-canvas {
-        min-height: auto;
-        padding: 20px 16px 30px;
-        border-radius: 12px;
-      }
-
-      .orientation-tip {
-        display: flex;
-      }
-
-      .header {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-
-      .logo-img-left, .logo-img-right {
-        height: 50px;
-        max-width: 95px;
-      }
-
-      .header-titles {
-        width: 100%;
-        order: 3;
-        padding: 0;
-        margin-top: 4px;
-      }
-
-      .header-titles h1 {
-        font-size: 20px;
-      }
-
-      .header-titles p {
-        font-size: 12px;
-      }
-
-      .connector-svg {
-        display: none;
-      }
-
-      .btn-back {
-        position: static;
-        margin-bottom: 16px;
-        align-self: flex-start;
-      }
-
-      .node-top-dark {
-        width: 100%;
-        padding: 16px 14px;
-      }
-
-      .middle-zone-home {
-        height: auto;
-        margin: 14px 0;
-        justify-content: center;
-      }
-
-      .node-staff {
-        width: 100%;
-        max-width: 100%;
-      }
-
-      .areas-container {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin-top: 6px;
-      }
-
-      .node-area {
-        min-height: 70px;
-      }
-
-      .grid-2-cols {
-        grid-template-columns: 1fr;
-        gap: 14px;
-        width: 100%;
-      }
-
-      .grid-1-col .card-sublevel {
-        width: 100% !important;
-      }
-
-      .spacer-3levels, .spacer-2levels {
-        height: 14px;
-      }
-
-      /* En táctil vertical los popups de hover flotantes no se usan */
-      .popup-box {
-        display: none !important;
-      }
-
-      .node-area .area-title-wrap {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 14px 16px;
-      }
-
-      .node-area .area-title-wrap h3 {
-        text-align: left;
-        font-size: 13.5px;
-      }
-    }
-
-    /* 2. MÓVIL EN FORMATO HORIZONTAL (LANDSCAPE) */
-    @media screen and (orientation: landscape) and (max-height: 600px) {
-      body {
-        padding: 8px 12px;
-        min-height: 100vh;
-      }
-
-      .main-canvas {
-        min-height: 96vh;
-        padding: 14px 20px;
-        overflow-x: auto;
-      }
-
-      .header {
-        margin-bottom: 8px;
-      }
-
-      .logo-img-left, .logo-img-right {
-        height: 40px;
-        max-width: 80px;
-      }
-
-      .header-titles h1 {
-        font-size: 17px;
-      }
-
-      .header-titles p {
-        font-size: 11px;
-      }
-
-      .node-top-dark {
-        padding: 10px 16px;
-        width: 400px;
-      }
-
-      .node-top-dark h2 {
-        font-size: 12.5px;
-      }
-
-      .middle-zone-home {
-        height: 70px;
-      }
-
-      .node-staff {
-        padding: 6px 10px;
-        min-width: 160px;
-      }
-
-      .staff-sub {
-        font-size: 9px;
-      }
-
-      .staff-name {
-        font-size: 13px;
-      }
-
-      .areas-container {
-        gap: 12px;
-      }
-
-      .node-area {
-        min-height: 70px;
-      }
-
-      .area-title-wrap {
-        padding: 10px 6px;
-      }
-
-      .area-title-wrap h3 {
-        font-size: 10.5px;
-      }
-
-      .spacer-3levels {
-        height: 25px;
-      }
-
-      .spacer-2levels {
-        height: 50px;
-      }
-
-      .card-sublevel {
-        padding: 10px 14px;
-        min-height: 65px;
-      }
-
-      .card-sublevel h3 {
-        font-size: 11.5px;
-      }
-
-      .puestos-list li {
-        font-size: 10.5px;
-        padding: 3px 6px;
-      }
-
-      /* Ocultar popups flotantes en celular apaisado para usar el modal completo y cómodo */
-      .popup-box {
-        display: none !important;
-      }
-
-      /* Ajustes para el Drawer modal táctil en pantalla apaisada */
-      .mobile-drawer {
-        max-height: 90vh;
-        padding: 14px 18px 16px;
-        gap: 8px;
-      }
-
-      .mobile-drawer-header {
-        padding-bottom: 6px;
-      }
-
-      .mobile-drawer-title {
-        font-size: 15px;
-      }
-
-      .mobile-drawer-body {
-        font-size: 12px;
-        line-height: 1.45;
-        max-height: 48vh;
-      }
-
-      .mobile-drawer-btn {
-        margin-top: 4px;
-        padding: 9px 14px;
-        font-size: 12px;
-      }
+      transition: background 0.2s ease;
+      width: 100%;
     }
   </style>
 </head>
 <body>
 
-  <div class="main-canvas">
-
-    <!-- AVISO DE SUGERENCIA DE ORIENTACIÓN PARA MÓVILES -->
-    <div id="orientation-tip" class="orientation-tip">
-      <div class="tip-content">
-        <span class="tip-icon">🔄</span>
-        <span>Para apreciar el organigrama completo con sus líneas conectadas, te sugerimos rotar el celular a posición horizontal.</span>
+  <!-- CAPA DE BLOQUEO EN VERTICAL -->
+  <div id="landscape-blocker">
+    <div class="blocker-container">
+      <div class="icon-wrapper">
+        <div class="rotation-arrow"></div>
+        <svg class="phone-svg" viewBox="0 0 24 24">
+          <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+          <line x1="12" y1="18" x2="12" y2="18.01" stroke-width="3"></line>
+        </svg>
       </div>
-      <button class="tip-close" onclick="dismissOrientationTip()" title="Cerrar sugerencia">✕</button>
+
+      <span class="badge-rot">Vista Horizontal Requerida</span>
+      <h2>Girá tu teléfono</h2>
+      <p>Para recorrer el organigrama y consultar las áreas de la planta, colocá tu dispositivo de forma horizontal apaisada.</p>
+
+      <div class="hint-box">
+        <span>💡</span>
+        <span>Asegurate de tener activada la rotación automática en tu pantalla.</span>
+      </div>
     </div>
+  </div>
+
+  <div class="main-canvas">
 
     <!-- ENCABEZADO -->
     <header class="header">
       <div class="logo-container">
-        <img class="logo-img-left" src="logo-ceramica.png" alt="Cerámica Marcos Paz" onerror="this.onerror=null; this.src='https://dummyimage.com/130x85/ea580c/ffffff&text=CERAMICA+MP';">
+        <img class="logo-img-left" src="logo-ceramica.png" alt="Cerámica Marcos Paz" onerror="this.onerror=null; this.src='https://dummyimage.com/130x75/ea580c/ffffff&text=CERAMICA+MP';">
       </div>
 
       <div class="header-titles">
@@ -1002,118 +725,78 @@
       </div>
 
       <div class="logo-container">
-        <img class="logo-img-right" src="logo-grupo.png" alt="Grupo MP" onerror="this.onerror=null; this.src='https://dummyimage.com/85x85/1b2f4f/ffffff&text=GRUPO+MP';">
+        <img class="logo-img-right" src="logo-grupo.png" alt="Grupo MP" onerror="this.onerror=null; this.src='https://dummyimage.com/75x75/1b2f4f/ffffff&text=GRUPO+MP';">
       </div>
     </header>
 
     <!-- ========================================== -->
-    <!-- 0. VISTA HOME (GERENCIA GENERAL)          -->
+    <!-- 0. VISTA HOME                             -->
     <!-- ========================================== -->
     <div class="view-section active" id="view-home">
       <svg class="connector-svg" id="svg-home"></svg>
 
-      <div class="node-top-dark bg-navy has-popup" id="home-gerencia" tabindex="0" onclick="handleCardClick(this, event)">
+      <div class="node-top-dark bg-navy has-popup" id="home-gerencia" tabindex="0">
         <h2>GERENCIA DE PRODUCCIÓN INDUSTRIAL</h2>
-        <div class="popup-box">
+        <div class="popup-box popup-bottom pop-navy">
           <span class="popup-tag">GERENCIA DE PRODUCCIÓN INDUSTRIAL</span>
-          <p class="popup-desc">Gestionar integralmente la operación industrial, coordinando la ejecución del proceso productivo, el abastecimiento y disponibilidad de materias primas, y la conservación y disponibilidad de los equipos, instalaciones, maquinaria móvil, herramental y recursos técnicos necesarios para la operación. Orientar la gestión al cumplimiento de los objetivos productivos y de calidad, asegurando la continuidad operativa y la coordinación entre las distintas áreas que intervienen en el proceso.</p>
+          Gestionar integralmente la operación industrial, coordinando la ejecución del proceso productivo, el abastecimiento y disponibilidad de materias primas, y la conservación y disponibilidad de los equipos, instalaciones, maquinaria móvil, herramental y recursos técnicos necesarios para la operación. Orientar la gestión al cumplimiento de los objetivos productivos y de calidad, asegurando la continuidad operativa y la coordinación entre las distintas áreas que intervienen en el proceso.
         </div>
       </div>
 
       <div class="middle-zone-home">
-        <div class="node-staff has-popup" id="home-staff" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="node-staff has-popup" id="home-staff" tabindex="0">
           <div class="staff-sub">SOPORTE TRANSVERSAL / STAFF</div>
           <div class="staff-name">INGENIERÍA</div>
-          <div class="popup-box">
+          <div class="popup-box popup-top pop-navy">
             <span class="popup-tag">INGENIERÍA</span>
-            <p class="popup-desc">Brindar soporte técnico transversal a las distintas unidades de negocio del Grupo, desarrollando e implementando proyectos de mejora, optimización y modernización de procesos e instalaciones, con especialización en ingeniería eléctrica, electrónica, mecánica, automatización e instrumentación, y acompañando la incorporación de nuevas tecnologías.</p>
+            Brindar soporte técnico transversal a las distintas unidades de negocio del Grupo, desarrollando e implementando proyectos de mejora, optimización y modernización de procesos e instalaciones, con especialización en ingeniería eléctrica, electrónica, mecánica, automatización e instrumentación, y acompañando la incorporación de nuevas tecnologías.
           </div>
         </div>
       </div>
 
       <div class="areas-container">
-        <!-- 1. Producción -->
-        <div class="node-area card-prod has-popup target-home" 
-             data-target-view="view-prod" 
-             data-target-title="DEPARTAMENTO DE PRODUCCIÓN" 
-             data-color="var(--col-prod)" 
-             onclick="handleCardClick(this, event)" 
-             tabindex="0">
+        <div class="node-area card-prod has-popup target-home" data-target="view-prod" data-title="DEPARTAMENTO DE PRODUCCIÓN" tabindex="0">
           <div class="area-bar"></div>
-          <div class="area-title-wrap">
-            <h3>PRODUCCIÓN</h3>
-          </div>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-prod);">PRODUCCIÓN</span>
-            <p class="popup-desc">Asegurar la ejecución del cronograma de producción en tiempo y forma, gestionando los recursos y procesos para alcanzar los volúmenes previstos bajo estándares de calidad, productividad y eficiencia operativa.</p>
+          <div class="area-title-wrap"><h3>PRODUCCIÓN</h3></div>
+          <div class="popup-box popup-top pop-prod">
+            <span class="popup-tag">PRODUCCIÓN</span>
+            Asegurar la ejecución del cronograma de producción en tiempo y forma, gestionando los recursos y procesos para alcanzar los volúmenes previstos bajo estándares de calidad, productividad y eficiencia operativa.
           </div>
         </div>
 
-        <!-- 2. Mantenimiento Industrial -->
-        <div class="node-area card-mant-ind has-popup target-home" 
-             data-target-view="view-mant-ind" 
-             data-target-title="DEPARTAMENTO DE MANTENIMIENTO INDUSTRIAL" 
-             data-color="var(--col-mant-ind)" 
-             onclick="handleCardClick(this, event)" 
-             tabindex="0">
+        <div class="node-area card-mant-ind has-popup target-home" data-target="view-mant-ind" data-title="DEPARTAMENTO DE MANTENIMIENTO INDUSTRIAL" tabindex="0">
           <div class="area-bar"></div>
-          <div class="area-title-wrap">
-            <h3>MANTENIMIENTO INDUSTRIAL</h3>
-          </div>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-mant-ind);">MANTENIMIENTO INDUSTRIAL</span>
-            <p class="popup-desc">Garantizar disponibilidad y confiabilidad de equipos e instalaciones industriales mediante mantenimiento preventivo, predictivo y correctivo, gestionando repuestos y recursos para la continuidad operativa.</p>
+          <div class="area-title-wrap"><h3>MANTENIMIENTO INDUSTRIAL</h3></div>
+          <div class="popup-box popup-top pop-mant-ind">
+            <span class="popup-tag">MANTENIMIENTO INDUSTRIAL</span>
+            Garantizar disponibilidad y confiabilidad de equipos e instalaciones industriales mediante mantenimiento preventivo, predictivo y correctivo, gestionando repuestos y recursos para la continuidad operativa.
           </div>
         </div>
 
-        <!-- 3. Matricería y Taller -->
-        <div class="node-area card-matr has-popup target-home" 
-             data-target-view="view-matr" 
-             data-target-title="DEPARTAMENTO DE MATRICERÍA Y TALLER" 
-             data-color="var(--col-matr)" 
-             onclick="handleCardClick(this, event)" 
-             tabindex="0">
+        <div class="node-area card-matr has-popup target-home" data-target="view-matr" data-title="DEPARTAMENTO DE MATRICERÍA Y TALLER" tabindex="0">
           <div class="area-bar"></div>
-          <div class="area-title-wrap">
-            <h3>MATRICERÍA Y TALLER</h3>
-          </div>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-matr);">MATRICERÍA Y TALLER</span>
-            <p class="popup-desc">Asegurar disponibilidad de moldes de producción, mediante la fabricación mantenimiento, preparación y puesta a punto de dados, boquillas, y estructura. Brindar soporte de fabricación, mecanizado y reparación metalmecánica desde el taller.</p>
+          <div class="area-title-wrap"><h3>MATRICERÍA Y TALLER</h3></div>
+          <div class="popup-box popup-top pop-matr">
+            <span class="popup-tag">MATRICERÍA Y TALLER</span>
+            Asegurar disponibilidad de moldes de producción, mediante la fabricación mantenimiento, preparación y puesta a punto de dados, boquillas, y estructura. Brindar soporte de fabricación, mecanizado y reparación metalmecánica desde el taller.
           </div>
         </div>
 
-        <!-- 4. Mantenimiento Vehicular -->
-        <div class="node-area card-mant-veh has-popup target-home" 
-             data-target-view="view-mant-veh" 
-             data-target-title="DEPARTAMENTO DE MANTENIMIENTO VEHICULAR" 
-             data-color="var(--col-mant-veh)" 
-             onclick="handleCardClick(this, event)" 
-             tabindex="0">
+        <div class="node-area card-mant-veh has-popup target-home" data-target="view-mant-veh" data-title="DEPARTAMENTO DE MANTENIMIENTO VEHICULAR" tabindex="0">
           <div class="area-bar"></div>
-          <div class="area-title-wrap">
-            <h3>MANTENIMIENTO VEHICULAR</h3>
-          </div>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-mant-veh);">MANTENIMIENTO VEHICULAR</span>
-            <p class="popup-desc">Garantizar disponibilidad y confiabilidad de la flota y equipos móviles mediante planificación y ejecución del mantenimiento preventivo y correctivo, sosteniendo la capacidad de operación.</p>
+          <div class="area-title-wrap"><h3>MANTENIMIENTO VEHICULAR</h3></div>
+          <div class="popup-box popup-top pop-mant-veh">
+            <span class="popup-tag">MANTENIMIENTO VEHICULAR</span>
+            Garantizar disponibilidad y confiabilidad de la flota y equipos móviles mediante planificación y ejecución del mantenimiento preventivo y correctivo, sosteniendo la capacidad de operación.
           </div>
         </div>
 
-        <!-- 5. Abastecimiento -->
-        <div class="node-area card-abast has-popup target-home" 
-             data-target-view="view-abast" 
-             data-target-title="DEPARTAMENTO DE ABASTECIMIENTO" 
-             data-color="var(--col-abast)" 
-             onclick="handleCardClick(this, event)" 
-             tabindex="0">
+        <div class="node-area card-abast has-popup target-home" data-target="view-abast" data-title="DEPARTAMENTO DE ABASTECIMIENTO" tabindex="0">
           <div class="area-bar"></div>
-          <div class="area-title-wrap">
-            <h3>ABASTECIMIENTO</h3>
-          </div>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-abast);">ABASTECIMIENTO</span>
-            <p class="popup-desc">Asegurar el suministro continuo de materias primas a producción, gestionando de forma eficiente su extracción, preparación, acopio y logística según los requerimientos operativos.</p>
+          <div class="area-title-wrap"><h3>ABASTECIMIENTO</h3></div>
+          <div class="popup-box popup-top pop-abast">
+            <span class="popup-tag">ABASTECIMIENTO</span>
+            Asegurar el suministro continuo de materias primas a producción, gestionando de forma eficiente su extracción, preparación, acopio y logística según los requerimientos operativos.
           </div>
         </div>
       </div>
@@ -1126,41 +809,38 @@
       <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
       <svg class="connector-svg" id="svg-prod"></svg>
 
-      <!-- Nivel 1 -->
-      <div class="node-top-dark bg-prod has-popup" id="prod-top" tabindex="0" onclick="handleCardClick(this, event)">
+      <div class="node-top-dark bg-prod has-popup" id="prod-top" tabindex="0">
         <h2>ANALISTA DE DATOS Y PROCESOS</h2>
-        <div class="popup-box">
-          <span class="popup-tag" style="color: var(--col-prod);">ANALISTA DE DATOS Y PROCESOS</span>
-          <p class="popup-desc">Analiza los procesos industriales mediante la gestión de datos, desarrollando indicadores y herramientas de control que permitan detectar desvíos, pérdidas y oportunidades de mejora. Realiza el seguimiento de la información productiva y de consumos, impulsa acciones de mejora y brinda soporte a la toma de decisiones de la Gerencia. Asume la coordinación operativa del área Industrial en ausencia del Gerente.</p>
+        <div class="popup-box popup-bottom pop-prod">
+          <span class="popup-tag">ANALISTA DE DATOS Y PROCESOS</span>
+          Analiza los procesos industriales mediante la gestión de datos, desarrollando indicadores y herramientas de control que permitan detectar desvíos, pérdidas y oportunidades de mejora. Realiza el seguimiento de la información productiva y de consumos, impulsa acciones de mejora y brinda soporte a la toma de decisiones de la Gerencia. Asume la coordinación operativa del área Industrial en ausencia del Gerente.
         </div>
       </div>
 
-      <div class="spacer-3levels"></div>
+      <div class="spacer-zone"></div>
 
-      <!-- Nivel 2: Supervisores -->
       <div class="grid-2-cols" id="prod-mid-grid">
-        <div class="card-sublevel has-popup" id="prod-sup-1" style="border-top: 6px solid var(--col-prod);" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="prod-sup-1" style="border-top: 6px solid var(--col-prod);" tabindex="0">
           <h3 style="color: var(--col-prod);">SUPERVISORES DE PRODUCCIÓN</h3>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-prod);">SUPERVISORES DE PRODUCCIÓN</span>
-            <p class="popup-desc">Conduce integralmente la operación de la planta durante su turno, coordinando al personal y supervisando el proceso, sus parámetros y las condiciones de equipos e instalaciones. Es responsable del cumplimiento de los objetivos productivos del turno, la continuidad operativa, la calidad, el orden y la seguridad, tomando decisiones ante desvíos y coordinando las intervenciones necesarias con las áreas de soporte.</p>
+          <div class="popup-box popup-top pop-prod">
+            <span class="popup-tag">SUPERVISORES DE PRODUCCIÓN</span>
+            Conduce integralmente la operación de la planta durante su turno, coordinando al personal y supervisando el proceso, sus parámetros y las condiciones de equipos e instalaciones. Es responsable del cumplimiento de los objetivos productivos del turno, la continuidad operativa, la calidad, el orden y la seguridad, tomando decisiones ante desvíos y coordinando las intervenciones necesarias con las áreas de soporte.
           </div>
         </div>
 
-        <div class="card-sublevel has-popup" id="prod-sup-2" style="border-top: 6px solid var(--col-prod);" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="prod-sup-2" style="border-top: 6px solid var(--col-prod);" tabindex="0">
           <h3 style="color: var(--col-prod);">SUPERVISOR DE INSUMOS Y VAGONETAS</h3>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-prod);">SUPERVISOR DE INSUMOS Y VAGONETAS</span>
-            <p class="popup-desc">Asegura la disponibilidad y correcta gestión de los insumos requeridos por Producción, coordinando su recepción, almacenamiento y entrega. Gestiona el mantenimiento y reparación de las vagonetas para garantizar su disponibilidad operativa.</p>
+          <div class="popup-box popup-top pop-prod">
+            <span class="popup-tag">SUPERVISOR DE INSUMOS Y VAGONETAS</span>
+            Asegura la disponibilidad y correcta gestión de los insumos requeridos por Producción, coordinando su recepción, almacenamiento y entrega. Gestiona el mantenimiento y reparación de las vagonetas para garantizar su disponibilidad operativa.
           </div>
         </div>
       </div>
 
-      <div class="spacer-3levels"></div>
+      <div class="spacer-zone"></div>
 
-      <!-- Nivel 3: Operativos -->
       <div class="grid-2-cols" id="prod-bot-grid">
-        <div class="card-sublevel has-popup" id="prod-op-1" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="prod-op-1" tabindex="0">
           <h3 style="color: var(--col-prod);">PERSONAL OPERATIVO</h3>
           <ul class="puestos-list">
             <li>Operarios de producción</li>
@@ -1168,35 +848,21 @@
             <li>Maquinistas y autoelevadoristas</li>
             <li>Personal de maestranza de planta</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-prod);">PERSONAL OPERATIVO</span>
-            <div class="popup-desc">
-              <p>Personal de planta abocado a la operación continua de las líneas, mantenimiento de turno y logística interna:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Operarios de producción</li>
-                <li>Mantenedores de turno</li>
-                <li>Maquinistas y autoelevadoristas</li>
-                <li>Personal de maestranza de planta</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-prod">
+            <span class="popup-tag">PERSONAL OPERATIVO</span>
+            Equipo de ejecución directa en líneas productivas continuas, responsable de operar maquinarias, vigilar parámetros del proceso, asegurar el flujo ininterrumpido de material y mantener condiciones óptimas de orden y seguridad en nave.
           </div>
         </div>
 
-        <div class="card-sublevel has-popup" id="prod-op-2" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="prod-op-2" tabindex="0">
           <h3 style="color: var(--col-prod);">PERSONAL DE MANTENIMIENTO DE VAGONETAS</h3>
           <ul class="puestos-list">
             <li>Fumistero</li>
             <li>Soldador</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-prod);">PERSONAL DE MANTENIMIENTO DE VAGONETAS</span>
-            <div class="popup-desc">
-              <p>Personal especializado en la conservación, reparación y mantenimiento refractario y mecánico de vagonetas:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Fumistero</li>
-                <li>Soldador</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-prod">
+            <span class="popup-tag">PERSONAL DE MANTENIMIENTO DE VAGONETAS</span>
+            Personal técnico abocado al acondicionamiento térmico y estructural del parque de vagonetas del secadero y horno túnel, realizando reparaciones de refractarios y herrería pesada para evitar descarrilamientos y pérdidas térmicas.
           </div>
         </div>
       </div>
@@ -1209,47 +875,38 @@
       <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
       <svg class="connector-svg" id="svg-mant-ind"></svg>
 
-      <!-- Nivel 1 -->
-      <div class="node-top-dark bg-mant-ind has-popup" id="mi-top" tabindex="0" onclick="handleCardClick(this, event)">
+      <div class="node-top-dark bg-mant-ind has-popup" id="mi-top" tabindex="0">
         <h2>ANALISTA DE MANTENIMIENTO</h2>
-        <div class="popup-box">
-          <span class="popup-tag" style="color: var(--col-mant-ind);">ANALISTA DE MANTENIMIENTO</span>
-          <p class="popup-desc">Planifica, coordina y controla la gestión de mantenimiento industrial, definiendo y actualizando los planes preventivos, criticidad de equipos y necesidades de repuestos y servicios. Gestiona la información técnica y el sistema de mantenimiento, analiza fallas e indicadores y coordina con Producción las ventanas de intervención, buscando mejorar la disponibilidad y confiabilidad de los equipos.</p>
+        <div class="popup-box popup-bottom pop-mant-ind">
+          <span class="popup-tag">ANALISTA DE MANTENIMIENTO</span>
+          Planifica, coordina y controla la gestión de mantenimiento industrial, definiendo y actualizando los planes preventivos, criticidad de equipos y necesidades de repuestos y servicios. Gestiona la información técnica y el sistema de mantenimiento, analiza fallas e indicadores y coordina con Producción las ventanas de intervención, buscando mejorar la disponibilidad y confiabilidad de los equipos.
         </div>
       </div>
 
-      <div class="spacer-3levels"></div>
+      <div class="spacer-zone"></div>
 
-      <!-- Nivel 2 -->
       <div class="grid-1-col">
-        <div class="card-sublevel has-popup" id="mi-mid" style="width: 480px; border-top: 6px solid var(--col-mant-ind);" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="mi-mid" style="width: 480px; border-top: 6px solid var(--col-mant-ind);" tabindex="0">
           <h3 style="color: var(--col-mant-ind);">SUPERVISOR DE MANTENIMIENTO INDUSTRIAL</h3>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-mant-ind);">SUPERVISOR DE MANTENIMIENTO INDUSTRIAL</span>
-            <p class="popup-desc">Supervisa y coordina la ejecución de las tareas de mantenimiento industrial, conduciendo al personal y asegurando la correcta realización de intervenciones preventivas y correctivas. Diagnostica fallas, asigna recursos y coordina con Producción las intervenciones y puestas en marcha, garantizando trabajos seguros, técnicamente adecuados y orientados a recuperar y preservar la disponibilidad de los equipos.</p>
+          <div class="popup-box popup-top pop-mant-ind">
+            <span class="popup-tag">SUPERVISOR DE MANTENIMIENTO INDUSTRIAL</span>
+            Supervisa y coordina la ejecución de las tareas de mantenimiento industrial, conduciendo al personal y asegurando la correcta realización de intervenciones preventivas y correctivas. Diagnostica fallas, asigna recursos y coordina con Producción las intervenciones y puestas en marcha, garantizando trabajos seguros, técnicamente adecuados y orientados a recuperar y preservar la disponibilidad de los equipos.
           </div>
         </div>
       </div>
 
-      <div class="spacer-3levels"></div>
+      <div class="spacer-zone"></div>
 
-      <!-- Nivel 3 -->
       <div class="grid-1-col">
-        <div class="card-sublevel has-popup" id="mi-bot" style="width: 480px;" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="mi-bot" style="width: 480px;" tabindex="0">
           <h3 style="color: var(--col-mant-ind);">PERSONAL DE MANTENIMIENTO</h3>
           <ul class="puestos-list">
             <li>Mecánicos</li>
             <li>Electricistas</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-mant-ind);">PERSONAL DE MANTENIMIENTO</span>
-            <div class="popup-desc">
-              <p>Personal técnico de ejecución mecánica y eléctrica para el mantenimiento preventivo y correctivo de planta:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Mecánicos</li>
-                <li>Electricistas</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-mant-ind">
+            <span class="popup-tag">PERSONAL DE MANTENIMIENTO</span>
+            Técnicos especialistas en electromecánica industrial encargados del desarme, montaje, lubricación, ajuste de reductores y calibración de tableros eléctricos e instrumentación en las plantas.
           </div>
         </div>
       </div>
@@ -1262,54 +919,39 @@
       <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
       <svg class="connector-svg" id="svg-matr"></svg>
 
-      <!-- Nivel 1 -->
-      <div class="node-top-dark bg-matr has-popup" id="matr-top" tabindex="0" onclick="handleCardClick(this, event)">
+      <div class="node-top-dark bg-matr has-popup" id="matr-top" tabindex="0">
         <h2>SUPERVISOR DE MATRICERÍA</h2>
-        <div class="popup-box">
-          <span class="popup-tag" style="color: var(--col-matr);">SUPERVISOR DE MATRICERÍA</span>
-          <p class="popup-desc">Gestiona la fabricación, mantenimiento, ajuste y disponibilidad de los moldes de producción, asegurando su condición dimensional y funcional y su impacto sobre la calidad y estabilidad del proceso. Analiza problemas de producto y proceso vinculados a matricería, extrusión y materia prima, definiendo ajustes y acciones correctivas, y conduce técnicamente al personal del área. Planifica y supervisa los trabajos de mecanizado, fabricación y reparación metalmecánica realizados desde el taller.</p>
+        <div class="popup-box popup-bottom pop-matr">
+          <span class="popup-tag">SUPERVISOR DE MATRICERÍA</span>
+          Gestiona la fabricación, mantenimiento, ajuste y disponibilidad de los moldes de producción, asegurando su condición dimensional y funcional y su impacto sobre la calidad y estabilidad del proceso. Analiza problemas de producto y proceso vinculados a matricería, extrusión y materia prima, definiendo ajustes y acciones correctivas, y conduce técnicamente al personal del área. Planifica y supervisa los trabajos de mecanizado, fabricación y reparación metalmecánica realizados desde el taller.
         </div>
       </div>
 
-      <div class="spacer-2levels"></div>
+      <div class="spacer-zone spacer-2lvl"></div>
 
-      <!-- Nivel 2 -->
       <div class="grid-2-cols" id="matr-bot-grid">
-        <div class="card-sublevel has-popup" id="matr-op-1" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="matr-op-1" tabindex="0">
           <h3 style="color: var(--col-matr);">PERSONAL DE MATRICERÍA</h3>
           <ul class="puestos-list">
             <li>Matricero de campo</li>
             <li>Matricero de taller</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-matr);">PERSONAL DE MATRICERÍA</span>
-            <div class="popup-desc">
-              <p>Personal operativo especializado en la preparación, ajuste y cambio de moldes en línea y taller:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Matricero de campo</li>
-                <li>Matricero de taller</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-matr">
+            <span class="popup-tag">PERSONAL DE MATRICERÍA</span>
+            Especialistas dedicados al montaje, centrado, compensación y control de desgaste de boquillas y núcleos de extrusión tanto en línea directa como en el banco de ajuste.
           </div>
         </div>
 
-        <div class="card-sublevel has-popup" id="matr-op-2" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="matr-op-2" tabindex="0">
           <h3 style="color: var(--col-matr);">PERSONAL DE TALLER MECÁNICO</h3>
           <ul class="puestos-list">
             <li>Tornero</li>
             <li>Fresador</li>
             <li>Soldador</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-matr);">PERSONAL DE TALLER MECÁNICO</span>
-            <div class="popup-desc">
-              <p>Mecanizado, torneado, fresado y soldadura de piezas y componentes para matricería y planta:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Tornero</li>
-                <li>Fresador</li>
-                <li>Soldador</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-matr">
+            <span class="popup-tag">PERSONAL DE TALLER MECÁNICO</span>
+            Artesanos metalmecánicos encargados del maquinado de repuestos de precisión, recuperación de ejes, rellenos duros anti-desgaste y fabricación de componentes estructurales a medida.
           </div>
         </div>
       </div>
@@ -1322,32 +964,25 @@
       <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
       <svg class="connector-svg" id="svg-mant-veh"></svg>
 
-      <!-- Nivel 1 -->
-      <div class="node-top-dark bg-mant-veh has-popup" id="mv-top" tabindex="0" onclick="handleCardClick(this, event)">
+      <div class="node-top-dark bg-mant-veh has-popup" id="mv-top" tabindex="0">
         <h2>SUPERVISOR DE MANTENIMIENTO VEHICULAR</h2>
-        <div class="popup-box">
-          <span class="popup-tag" style="color: var(--col-mant-veh);">SUPERVISOR DE MANTENIMIENTO VEHICULAR</span>
-          <p class="popup-desc">Supervisa y coordina el mantenimiento preventivo y correctivo de las unidades móviles del área Industrial, conduciendo al personal y asegurando su disponibilidad, confiabilidad y seguridad. Planifica intervenciones, diagnostica fallas y define su resolución con recursos propios o externos, coordinando con las áreas usuarias las paradas y liberación de las unidades.</p>
+        <div class="popup-box popup-bottom pop-mant-veh">
+          <span class="popup-tag">SUPERVISOR DE MANTENIMIENTO VEHICULAR</span>
+          Supervisa y coordina el mantenimiento preventivo y correctivo de las unidades móviles del área Industrial, conduciendo al personal y asegurando su disponibilidad, confiabilidad y seguridad. Planifica intervenciones, diagnostica fallas y define su resolución con recursos propios o externos, coordinando con las áreas usuarias las paradas y liberación de las unidades.
         </div>
       </div>
 
-      <div class="spacer-2levels"></div>
+      <div class="spacer-zone spacer-2lvl"></div>
 
-      <!-- Nivel 2 -->
       <div class="grid-1-col">
-        <div class="card-sublevel has-popup" id="mv-bot" style="width: 480px;" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="mv-bot" style="width: 480px;" tabindex="0">
           <h3 style="color: var(--col-mant-veh);">PERSONAL DE MANTENIMIENTO VEHICULAR</h3>
           <ul class="puestos-list">
             <li>Mecánicos vehiculares</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-mant-veh);">PERSONAL DE MANTENIMIENTO VEHICULAR</span>
-            <div class="popup-desc">
-              <p>Mantenimiento preventivo y correctivo integral de la flota vehicular y maquinaria pesada:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Mecánicos vehiculares</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-mant-veh">
+            <span class="popup-tag">PERSONAL DE MANTENIMIENTO VEHICULAR</span>
+            Técnicos dedicados a la inspección y reparación mecánica, hidráulica y neumática de la flota pesada (palas cargadoras, topadoras, camiones volcadores y autoelevadores).
           </div>
         </div>
       </div>
@@ -1360,48 +995,36 @@
       <button class="btn-back" onclick="showView('view-home', 'GERENCIA DE PRODUCCIÓN INDUSTRIAL')">← Volver</button>
       <svg class="connector-svg" id="svg-abast"></svg>
 
-      <!-- Nivel 1 -->
-      <div class="node-top-dark bg-abast has-popup" id="abast-top" tabindex="0" onclick="handleCardClick(this, event)">
+      <div class="node-top-dark bg-abast has-popup" id="abast-top" tabindex="0">
         <h2>SUPERVISOR DE ABASTECIMIENTO</h2>
-        <div class="popup-box">
-          <span class="popup-tag" style="color: var(--col-abast);">SUPERVISOR DE ABASTECIMIENTO</span>
-          <p class="popup-desc">Supervisa y coordina la extracción, acopio y logística de arcilla necesaria para abastecer a las plantas industriales. Gestiona los recursos de cantera y transporte, propios y de terceros, planificando la extracción y los viajes según las necesidades productivas y asegurando continuidad de abastecimiento, eficiencia operativa y condiciones seguras de trabajo.</p>
+        <div class="popup-box popup-bottom pop-abast">
+          <span class="popup-tag">SUPERVISOR DE ABASTECIMIENTO</span>
+          Supervisa y coordina la extracción, acopio y logística de arcilla necesaria para abastecer a las plantas industriales. Gestiona los recursos de cantera y transporte, propios y de terceros, planificando la extracción y los viajes según las necesidades productivas y asegurando continuidad de abastecimiento, eficiencia operativa y condiciones seguras de trabajo.
         </div>
       </div>
 
-      <div class="spacer-2levels"></div>
+      <div class="spacer-zone spacer-2lvl"></div>
 
-      <!-- Nivel 2 -->
       <div class="grid-2-cols" id="abast-bot-grid">
-        <div class="card-sublevel has-popup" id="abast-op-1" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="abast-op-1" tabindex="0">
           <h3 style="color: var(--col-abast);">PERSONAL OPERATIVO DE CANTERA</h3>
           <ul class="puestos-list">
             <li>Maquinistas</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-abast);">PERSONAL OPERATIVO DE CANTERA</span>
-            <div class="popup-desc">
-              <p>Operación de maquinaria pesada para extracción, destape y preparación de arcillas en cantera:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Maquinistas</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-abast">
+            <span class="popup-tag">PERSONAL OPERATIVO DE CANTERA</span>
+            Operadores de equipo pesado encargados de destape de manto, extracción selectiva de arcillas y conformación de silos y acopios estratégicos en cantera.
           </div>
         </div>
 
-        <div class="card-sublevel has-popup" id="abast-op-2" tabindex="0" onclick="handleCardClick(this, event)">
+        <div class="card-sublevel has-popup" id="abast-op-2" tabindex="0">
           <h3 style="color: var(--col-abast);">PERSONAL DE LOGÍSTICA INTERNA</h3>
           <ul class="puestos-list">
             <li>Choferes</li>
           </ul>
-          <div class="popup-box">
-            <span class="popup-tag" style="color: var(--col-abast);">PERSONAL DE LOGÍSTICA INTERNA</span>
-            <div class="popup-desc">
-              <p>Transporte y traslado de arcillas y materias primas entre cantera, acopios y plantas:</p>
-              <ul class="puestos-list" style="margin-top:6px;">
-                <li>Choferes</li>
-              </ul>
-            </div>
+          <div class="popup-box popup-top pop-abast">
+            <span class="popup-tag">PERSONAL DE LOGÍSTICA INTERNA</span>
+            Conductores encargados del transporte continuo y pesaje del material arcilloso desde el yacimiento hasta las tolvas de recepción de ambas fábricas.
           </div>
         </div>
       </div>
@@ -1409,151 +1032,24 @@
 
   </div>
 
-  <!-- MODAL / BOTTOM-SHEET INTERACTIVO PARA DISPOSITIVOS MÓVILES -->
-  <div id="mobile-backdrop" class="mobile-backdrop" onclick="closeMobileDrawer()"></div>
-  <div id="mobile-drawer" class="mobile-drawer">
-    <div class="mobile-drawer-header">
-      <div>
-        <div class="mobile-drawer-tag" id="drawer-tag">DESCRIPCIÓN DE FUNCIONES</div>
-        <div class="mobile-drawer-title" id="drawer-title">Puesto</div>
-      </div>
-      <button class="mobile-drawer-close" onclick="closeMobileDrawer()" title="Cerrar">✕</button>
+  <!-- MODAL TÁCTIL (BOTTOM SHEET) -->
+  <div class="touch-modal-backdrop" id="touch-modal" onclick="closeTouchModal(event)">
+    <div class="touch-modal-card" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <button class="modal-close-btn" onclick="closeTouchModal()">✕</button>
+      <div class="modal-title-tag" id="modal-tag">PUESTO / ÁREA</div>
+      <div class="modal-desc-body" id="modal-desc">Descripción detallada...</div>
+      <button class="modal-btn-action" id="modal-action-btn" style="display: none;">Ingresar al departamento →</button>
     </div>
-    <div class="mobile-drawer-body" id="drawer-body">
-      Descripción del rol o área.
-    </div>
-    <div id="drawer-action-container"></div>
   </div>
 
-  <!-- SCRIPT DE NAVEGACIÓN, ROTACIÓN Y CÁLCULO DE LÍNEAS -->
   <script>
     let currentViewId = 'view-home';
     let isTouchUser = false;
 
-    // Detecta el primer contacto táctil con la pantalla (en vertical u horizontal)
     window.addEventListener('touchstart', function() {
       isTouchUser = true;
     }, { passive: true });
-
-    function isTouchOrMobileDevice(event) {
-      // 1. Si el evento recibido es de tipo touch
-      if (event && event.pointerType === 'touch') return true;
-
-      // 2. Si ya hubo interacción táctil confirmada
-      if (isTouchUser) return true;
-
-      // 3. Detección por User Agent (incluyendo iPad / iPhone en modo desktop)
-      const ua = navigator.userAgent || '';
-      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) ||
-                         (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
-      if (isMobileUA) return true;
-
-      // 4. Pantalla táctil nativa
-      const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-      if (hasTouch) return true;
-
-      // 5. Móvil en apaisado (altura pequeña de pantalla) o pantalla angosta
-      const isLandscapeMobile = window.matchMedia('(orientation: landscape) and (max-height: 650px)').matches;
-      if (isLandscapeMobile) return true;
-
-      const isNarrow = window.innerWidth <= 1024;
-      if (isNarrow) return true;
-
-      return false;
-    }
-
-    function dismissOrientationTip() {
-      const tip = document.getElementById('orientation-tip');
-      if (tip) tip.style.display = 'none';
-    }
-
-    /* CONTROL DE INTERACCIÓN UNIFICADO */
-    function handleCardClick(el, event) {
-      if (event) event.stopPropagation();
-
-      const targetView = el.getAttribute('data-target-view');
-      const targetTitle = el.getAttribute('data-target-title');
-      const btnColor = el.getAttribute('data-color') || 'var(--navy-main)';
-
-      // SOLO en computadoras de escritorio con mouse físico y pantalla grande: navegación directa si tiene destino
-      if (!isTouchOrMobileDevice(event) && targetView && targetTitle) {
-        showView(targetView, targetTitle);
-        return;
-      }
-
-      // EN DISPOSITIVOS TÁCTILES / MÓVILES (TANTO EN VERTICAL COMO EN HORIZONTAL):
-      // Primero mostramos la descripción en el modal drawer. Si tiene sub-organigrama, se agrega el botón de acceso.
-      const popupBox = el.querySelector('.popup-box');
-      let titleText = '';
-      let descHTML = '';
-
-      if (popupBox) {
-        const tagEl = popupBox.querySelector('.popup-tag');
-        const descEl = popupBox.querySelector('.popup-desc');
-        titleText = tagEl ? tagEl.textContent.trim() : (el.querySelector('h2, h3') ? el.querySelector('h2, h3').textContent.trim() : '');
-        descHTML = descEl ? descEl.innerHTML.trim() : popupBox.innerHTML.trim();
-      } else {
-        const heading = el.querySelector('h2, h3');
-        titleText = heading ? heading.textContent.trim() : '';
-        const list = el.querySelector('.puestos-list');
-        if (list) {
-          descHTML = '<ul class="puestos-list" style="margin-top:6px;">' + list.innerHTML + '</ul>';
-        } else {
-          descHTML = el.innerText.trim();
-        }
-      }
-
-      openMobileDrawer({
-        tag: 'DESCRIPCIÓN DE FUNCIONES',
-        title: titleText,
-        bodyHTML: descHTML,
-        targetView: targetView,
-        targetTitle: targetTitle,
-        btnColor: btnColor
-      });
-    }
-
-    function openMobileDrawer(data) {
-      const drawer = document.getElementById('mobile-drawer');
-      const backdrop = document.getElementById('mobile-backdrop');
-      const tag = document.getElementById('drawer-tag');
-      const title = document.getElementById('drawer-title');
-      const body = document.getElementById('drawer-body');
-      const actionContainer = document.getElementById('drawer-action-container');
-
-      tag.textContent = data.tag || 'DESCRIPCIÓN DE FUNCIONES';
-      title.textContent = data.title || '';
-      body.innerHTML = data.bodyHTML || data.body || '';
-
-      // Si el elemento posee suborganigrama, se añade el botón de ingreso
-      if (data.targetView && data.targetTitle) {
-        actionContainer.innerHTML = `
-          <button class="mobile-drawer-btn" style="background-color: ${data.btnColor};" onclick="goToDepartment('${data.targetView}', '${data.targetTitle}')">
-            <span>Ingresar al departamento</span>
-            <span>→</span>
-          </button>
-        `;
-      } else {
-        actionContainer.innerHTML = '';
-      }
-
-      document.body.style.overflow = 'hidden';
-      backdrop.classList.add('active');
-      drawer.classList.add('active');
-    }
-
-    function closeMobileDrawer() {
-      const drawer = document.getElementById('mobile-drawer');
-      const backdrop = document.getElementById('mobile-backdrop');
-      if (drawer) drawer.classList.remove('active');
-      if (backdrop) backdrop.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    function goToDepartment(viewId, title) {
-      closeMobileDrawer();
-      showView(viewId, title);
-    }
 
     function showView(viewId, title) {
       document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
@@ -1568,17 +1064,10 @@
       }
       currentViewId = viewId;
       
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(redrawCurrentView, 60);
     }
 
     function redrawCurrentView() {
-      // En pantalla móvil vertical ocultamos líneas automáticas para evitar superposiciones
-      if (window.innerWidth <= 992 && window.matchMedia('(orientation: portrait)').matches) {
-        document.querySelectorAll('.connector-svg').forEach(svg => svg.innerHTML = '');
-        return;
-      }
-
       if (currentViewId === 'view-home') drawHomeLines();
       else if (currentViewId === 'view-prod') drawProdLines();
       else if (currentViewId === 'view-mant-ind') drawMantIndLines();
@@ -1587,7 +1076,83 @@
       else if (currentViewId === 'view-abast') drawAbastLines();
     }
 
-    // 0. Líneas Home
+    function openTouchModal(title, text, targetView, navTitle, themeColor) {
+      const modal = document.getElementById('touch-modal');
+      const tag = document.getElementById('modal-tag');
+      const desc = document.getElementById('modal-desc');
+      const btn = document.getElementById('modal-action-btn');
+
+      tag.innerText = title;
+      desc.innerText = text;
+
+      if (targetView && navTitle) {
+        btn.style.display = 'inline-flex';
+        btn.style.background = themeColor || 'var(--navy-main)';
+        btn.onclick = function() {
+          closeTouchModal();
+          showView(targetView, navTitle);
+        };
+      } else {
+        btn.style.display = 'none';
+        btn.onclick = null;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeTouchModal(e) {
+      if (e) e.stopPropagation();
+      const modal = document.getElementById('touch-modal');
+      modal.classList.remove('active');
+    }
+
+    document.querySelectorAll('.target-home').forEach(card => {
+      card.addEventListener('click', function(e) {
+        const targetView = this.getAttribute('data-target');
+        const navTitle = this.getAttribute('data-title');
+        const title = this.querySelector('h3').innerText;
+        const popEl = this.querySelector('.popup-box');
+        
+        let desc = '';
+        if (popEl) {
+          const clone = popEl.cloneNode(true);
+          const tag = clone.querySelector('.popup-tag');
+          if (tag) tag.remove();
+          desc = clone.innerText.trim();
+        }
+
+        if (isTouchUser || ('ontouchstart' in window) || window.innerHeight <= 650) {
+          e.preventDefault();
+          e.stopPropagation();
+          const themeColor = getComputedStyle(this.querySelector('.area-bar')).backgroundColor;
+          openTouchModal(title, desc, targetView, navTitle, themeColor);
+        } else {
+          showView(targetView, navTitle);
+        }
+      });
+    });
+
+    document.querySelectorAll('.has-popup').forEach(elem => {
+      if (elem.classList.contains('target-home')) return;
+
+      elem.addEventListener('click', function(e) {
+        if (!isTouchUser && !('ontouchstart' in window) && window.innerHeight > 650) return;
+
+        const popEl = this.querySelector('.popup-box');
+        if (!popEl) return;
+
+        e.stopPropagation();
+        const clone = popEl.cloneNode(true);
+        const tag = clone.querySelector('.popup-tag');
+        const title = tag ? tag.innerText : 'DETALLES';
+        if (tag) tag.remove();
+        const desc = clone.innerText.trim();
+
+        openTouchModal(title, desc, null, null, null);
+      });
+    });
+
+    /* CONECTORES SVG */
     function drawHomeLines() {
       const svg = document.getElementById('svg-home');
       const view = document.getElementById('view-home');
@@ -1611,7 +1176,7 @@
         return { x: r.left + r.width / 2 - vRect.left, y: r.top - vRect.top };
       });
 
-      const busY = areaPts[0].y - 35;
+      const busY = areaPts[0].y - 40;
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
       p += `<line x1="${topX}" y1="${staffCenterY}" x2="${staffLeftX}" y2="${staffCenterY}" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4" />`;
@@ -1623,7 +1188,6 @@
       svg.innerHTML = p;
     }
 
-    // 1. Líneas Producción
     function drawProdLines() {
       const svg = document.getElementById('svg-prod');
       const view = document.getElementById('view-prod');
@@ -1656,7 +1220,7 @@
       const o1TopY = rO1.top - v.top;
       const o2TopY = rO2.top - v.top;
 
-      const bus1Y = s1TopY - 25;
+      const bus1Y = s1TopY - 30;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${bus1Y}" stroke="#94a3b8" stroke-width="2" />`;
@@ -1670,7 +1234,6 @@
       svg.innerHTML = p;
     }
 
-    // 2. Líneas Mantenimiento Industrial
     function drawMantIndLines() {
       const svg = document.getElementById('svg-mant-ind');
       const view = document.getElementById('view-mant-ind');
@@ -1698,7 +1261,6 @@
       svg.innerHTML = p;
     }
 
-    // 3. Líneas Matricería y Taller
     function drawMatrLines() {
       const svg = document.getElementById('svg-matr');
       const view = document.getElementById('view-matr');
@@ -1722,7 +1284,7 @@
       const o2X = rO2.left + rO2.width / 2 - v.left;
       const o2TopY = rO2.top - v.top;
 
-      const busY = o1TopY - 30;
+      const busY = o1TopY - 50;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
@@ -1733,7 +1295,6 @@
       svg.innerHTML = p;
     }
 
-    // 4. Líneas Mantenimiento Vehicular
     function drawMantVehLines() {
       const svg = document.getElementById('svg-mant-veh');
       const view = document.getElementById('view-mant-veh');
@@ -1756,7 +1317,6 @@
       svg.innerHTML = p;
     }
 
-    // 5. Líneas Abastecimiento
     function drawAbastLines() {
       const svg = document.getElementById('svg-abast');
       const view = document.getElementById('view-abast');
@@ -1780,7 +1340,7 @@
       const o2X = rO2.left + rO2.width / 2 - v.left;
       const o2TopY = rO2.top - v.top;
 
-      const busY = o1TopY - 30;
+      const busY = o1TopY - 50;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
@@ -1791,17 +1351,12 @@
       svg.innerHTML = p;
     }
 
-    // Redibujo sincronizado
     window.addEventListener('load', redrawCurrentView);
     window.addEventListener('resize', redrawCurrentView);
-    window.addEventListener('orientationchange', () => {
+    window.addEventListener('orientationchange', function() {
       setTimeout(redrawCurrentView, 250);
     });
-
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(redrawCurrentView);
-    }
-    setTimeout(redrawCurrentView, 200);
+    document.fonts.ready.then(redrawCurrentView);
   </script>
 
 </body>
