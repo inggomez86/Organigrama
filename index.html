@@ -19,7 +19,6 @@
       --col-mant-veh: #bf6613;
       --col-abast: #1b728b;
 
-      /* Estilo integrado de tarjeta blanca para pop-ups */
       --popup-bg: #ffffff;
       --popup-border: #cbd5e1;
     }
@@ -56,7 +55,7 @@
       justify-content: space-between;
     }
 
-    /* BANNER DE SUGERENCIA DE ROTACIÓN */
+    /* BANNER DE SUGERENCIA DE ROTACIÓN EN CELULARES */
     .orientation-tip {
       display: none;
       background: linear-gradient(135deg, #182d49 0%, #275680 100%);
@@ -161,7 +160,7 @@
       font-weight: 500;
     }
 
-    /* BOTÓN VOLVER FLOTANTE */
+    /* BOTÓN VOLVER */
     .btn-back {
       position: absolute;
       top: 0;
@@ -206,7 +205,7 @@
       display: flex;
     }
 
-    /* SVG PARA LÍNEAS */
+    /* SVG PARA LÍNEAS CONECTORAS */
     .connector-svg {
       position: absolute;
       top: 0;
@@ -217,7 +216,7 @@
       z-index: 1;
     }
 
-    /* CONTENEDOR DISPARADOR DE POP-UP (PC) */
+    /* POP-UPS EN PC */
     .has-popup {
       position: relative;
       cursor: pointer;
@@ -233,7 +232,6 @@
       }
     }
 
-    /* DISEÑO DE TARJETA FLOTANTE INTEGRADA (PC) */
     .popup-box {
       visibility: hidden;
       opacity: 0;
@@ -327,7 +325,7 @@
       }
     }
 
-    /* Colores para nodos principales */
+    /* COLORES DE CABECERA */
     .bg-navy { background-color: var(--navy-main); }
     .bg-prod { background-color: var(--col-prod); }
     .bg-mant-ind { background-color: var(--col-mant-ind); }
@@ -398,7 +396,7 @@
       }
     }
 
-    /* TARJETAS INFERIORES DE ÁREA */
+    /* TARJETAS INFERIORES DE ÁREA (HOME) */
     .areas-container {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -608,9 +606,7 @@
       width: 100%;
     }
 
-    /* ========================================================
-       MODAL BOTTOM-SHEET PARA DISPOSITIVOS MÓVILES
-       ======================================================== */
+    /* MODAL TÁCTIL (BOTTOM SHEET) PARA CELULARES */
     .mobile-backdrop {
       display: none;
       position: fixed;
@@ -726,15 +722,11 @@
       transform: scale(0.98);
     }
 
-    /* Pistas visuales táctiles para móviles */
     .mobile-touch-hint {
       display: none;
     }
 
-    /* ========================================================
-       RESPONSIVE DESIGN (MÓVILES Y PANTALLAS TÁCTILES)
-       ======================================================== */
-
+    /* MEDIA QUERIES RESPONSIVE */
     @media screen and (max-width: 992px) and (orientation: portrait) {
       body {
         padding: 12px 10px;
@@ -830,12 +822,10 @@
         height: 14px;
       }
 
-      /* En móvil ocultamos el popup flotante tradicional para que no estorbe */
       .popup-box {
         display: none !important;
       }
 
-      /* Indicador de interactividad táctil en las tarjetas */
       .node-area .area-title-wrap {
         display: flex;
         justify-content: space-between;
@@ -862,7 +852,6 @@
       }
     }
 
-    /* Modo Móvil Horizontal (Landscape) */
     @media screen and (max-width: 992px) and (orientation: landscape) {
       body {
         padding: 10px;
@@ -925,7 +914,6 @@
         height: 60px;
       }
 
-      /* En horizontal táctil también usamos la modal táctil para evitar desbordes */
       .popup-box {
         display: none !important;
       }
@@ -1309,8 +1297,9 @@
   <script>
     let currentViewId = 'view-home';
 
+    // Detección estricta de breakpoint de diseño (pantallas <= 992px)
     function isMobileDevice() {
-      return (window.innerWidth <= 992) || ('ontouchstart' in window);
+      return window.innerWidth <= 992;
     }
 
     function dismissOrientationTip() {
@@ -1325,7 +1314,7 @@
       const targetView = el.getAttribute('data-target-view');
       const targetTitle = el.getAttribute('data-target-title');
 
-      // En PC con mouse: navegación directa si tiene targetView
+      // En PC con mouse o ventana de escritorio: navegación directa al departamento
       if (!isMobileDevice()) {
         if (targetView && targetTitle) {
           showView(targetView, targetTitle);
@@ -1333,7 +1322,7 @@
         return;
       }
 
-      // En MÓVILES y pantallas táctiles: abrir panel con descripción + botón de ingreso
+      // En MÓVILES (ancho <= 992px): abrir panel táctil inferior con descripción y botón
       const popupBox = el.querySelector('.popup-box');
       if (!popupBox) {
         if (targetView && targetTitle) showView(targetView, targetTitle);
@@ -1368,7 +1357,6 @@
       title.innerText = data.title || '';
       body.innerText = data.body || '';
 
-      // Si el elemento permite navegar a un sub-organigrama, agregamos el botón de ingreso
       if (data.targetView && data.targetTitle) {
         actionContainer.innerHTML = `
           <button class="mobile-drawer-btn" style="background-color: ${data.btnColor};" onclick="goToDepartment('${data.targetView}', '${data.targetTitle}')">
@@ -1380,6 +1368,7 @@
         actionContainer.innerHTML = '';
       }
 
+      document.body.style.overflow = 'hidden';
       backdrop.classList.add('active');
       drawer.classList.add('active');
     }
@@ -1389,6 +1378,7 @@
       const backdrop = document.getElementById('mobile-backdrop');
       if (drawer) drawer.classList.remove('active');
       if (backdrop) backdrop.classList.remove('active');
+      document.body.style.overflow = '';
     }
 
     function goToDepartment(viewId, title) {
@@ -1410,7 +1400,7 @@
       currentViewId = viewId;
       
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(redrawCurrentView, 50);
+      setTimeout(redrawCurrentView, 60);
     }
 
     function redrawCurrentView() {
@@ -1632,12 +1622,16 @@
       svg.innerHTML = p;
     }
 
-    // Escuchas de eventos para redibujar en cambios de orientación o tamaño
+    // Redibujo sincronizado con carga de ventana y fuentes
     window.addEventListener('load', redrawCurrentView);
     window.addEventListener('resize', redrawCurrentView);
     window.addEventListener('orientationchange', () => {
       setTimeout(redrawCurrentView, 250);
     });
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(redrawCurrentView);
+    }
     setTimeout(redrawCurrentView, 200);
   </script>
 
