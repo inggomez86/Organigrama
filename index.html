@@ -606,7 +606,7 @@
       width: 100%;
     }
 
-    /* MODAL TÁCTIL (BOTTOM SHEET) PARA CELULARES */
+    /* MODAL TÁCTIL (BOTTOM SHEET) PARA CELULARES Y TABLETS */
     .mobile-backdrop {
       display: none;
       position: fixed;
@@ -727,6 +727,8 @@
     }
 
     /* MEDIA QUERIES RESPONSIVE */
+
+    /* 1. MÓVIL EN FORMATO VERTICAL (PORTRAIT) */
     @media screen and (max-width: 992px) and (orientation: portrait) {
       body {
         padding: 12px 10px;
@@ -852,24 +854,26 @@
       }
     }
 
-    @media screen and (max-width: 992px) and (orientation: landscape) {
+    /* 2. MÓVIL EN FORMATO HORIZONTAL (LANDSCAPE) */
+    @media screen and (orientation: landscape) and (max-height: 600px) {
       body {
-        padding: 10px;
+        padding: 8px 12px;
         min-height: 100vh;
       }
 
       .main-canvas {
         min-height: 96vh;
-        padding: 16px 24px;
+        padding: 14px 20px;
         overflow-x: auto;
       }
 
       .header {
-        margin-bottom: 12px;
+        margin-bottom: 8px;
       }
 
       .logo-img-left, .logo-img-right {
-        height: 44px;
+        height: 40px;
+        max-width: 80px;
       }
 
       .header-titles h1 {
@@ -881,41 +885,98 @@
       }
 
       .node-top-dark {
-        padding: 12px 18px;
-        width: 420px;
+        padding: 10px 16px;
+        width: 400px;
       }
 
       .node-top-dark h2 {
-        font-size: 13px;
+        font-size: 12.5px;
       }
 
       .middle-zone-home {
-        height: 75px;
+        height: 70px;
       }
 
       .node-staff {
-        padding: 8px 12px;
-        min-width: 170px;
+        padding: 6px 10px;
+        min-width: 160px;
+      }
+
+      .staff-sub {
+        font-size: 9px;
+      }
+
+      .staff-name {
+        font-size: 13px;
+      }
+
+      .areas-container {
+        gap: 12px;
       }
 
       .node-area {
-        min-height: 75px;
+        min-height: 70px;
+      }
+
+      .area-title-wrap {
+        padding: 10px 6px;
       }
 
       .area-title-wrap h3 {
-        font-size: 11px;
+        font-size: 10.5px;
       }
 
       .spacer-3levels {
-        height: 30px;
+        height: 25px;
       }
 
       .spacer-2levels {
-        height: 60px;
+        height: 50px;
       }
 
+      .card-sublevel {
+        padding: 10px 14px;
+        min-height: 65px;
+      }
+
+      .card-sublevel h3 {
+        font-size: 11.5px;
+      }
+
+      .puestos-list li {
+        font-size: 10.5px;
+        padding: 3px 6px;
+      }
+
+      /* Ocultar popups hover flotantes en touch landscape para evitar interferencias */
       .popup-box {
         display: none !important;
+      }
+
+      /* Ajustes para el Drawer modal táctil en pantalla apaisada */
+      .mobile-drawer {
+        max-height: 88vh;
+        padding: 14px 18px 16px;
+        gap: 10px;
+      }
+
+      .mobile-drawer-header {
+        padding-bottom: 8px;
+      }
+
+      .mobile-drawer-title {
+        font-size: 15px;
+      }
+
+      .mobile-drawer-body {
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .mobile-drawer-btn {
+        margin-top: 6px;
+        padding: 9px 14px;
+        font-size: 12.5px;
       }
     }
   </style>
@@ -1282,7 +1343,7 @@
   <div id="mobile-drawer" class="mobile-drawer">
     <div class="mobile-drawer-header">
       <div>
-        <div class="mobile-drawer-tag" id="drawer-tag">INFORMACIÓN</div>
+        <div class="mobile-drawer-tag" id="drawer-tag">DESCRIPCIÓN DE FUNCIONES</div>
         <div class="mobile-drawer-title" id="drawer-title">Puesto</div>
       </div>
       <button class="mobile-drawer-close" onclick="closeMobileDrawer()" title="Cerrar">✕</button>
@@ -1297,9 +1358,15 @@
   <script>
     let currentViewId = 'view-home';
 
-    // Detección estricta de breakpoint de diseño (pantallas <= 992px)
-    function isMobileDevice() {
-      return window.innerWidth <= 992;
+    /* Detección precisa de dispositivo móvil o táctil primario */
+    function isTouchOrMobileDevice() {
+      const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+      const isNarrow = window.innerWidth <= 1024;
+      
+      // Se activa el modo táctil si el dispositivo tiene pantalla táctil primaria, agente móvil o pantalla de hasta 1024px táctil
+      return isMobileUA || (isTouch && isCoarse) || (isTouch && isNarrow);
     }
 
     function dismissOrientationTip() {
@@ -1307,22 +1374,22 @@
       if (tip) tip.style.display = 'none';
     }
 
-    /* CONTROL INTELIGENTE DE CLIC (PC vs MÓVIL) */
+    /* CONTROL INTELIGENTE DE CLIC (PC vs MÓVIL EN VERTICAL U HORIZONTAL) */
     function handleCardClick(el, event) {
       if (event) event.stopPropagation();
 
       const targetView = el.getAttribute('data-target-view');
       const targetTitle = el.getAttribute('data-target-title');
 
-      // En PC con mouse o ventana de escritorio: navegación directa al departamento
-      if (!isMobileDevice()) {
+      // EN COMPUTADORAS DE ESCRITORIO CON MOUSE (POINTER FINE): navegación directa
+      if (!isTouchOrMobileDevice()) {
         if (targetView && targetTitle) {
           showView(targetView, targetTitle);
         }
         return;
       }
 
-      // En MÓVILES (ancho <= 992px): abrir panel táctil inferior con descripción y botón
+      // EN MÓVILES Y TABLETS (TANTO EN VERTICAL COMO EN HORIZONTAL):
       const popupBox = el.querySelector('.popup-box');
       if (!popupBox) {
         if (targetView && targetTitle) showView(targetView, targetTitle);
@@ -1332,8 +1399,9 @@
       const tagEl = popupBox.querySelector('.popup-tag');
       const descEl = popupBox.querySelector('.popup-desc');
 
-      const titleText = tagEl ? tagEl.innerText : el.innerText.trim();
-      const descText = descEl ? descEl.innerText : popupBox.innerText.replace(titleText, '').trim();
+      // Usamos textContent para leer el texto independientemente de si el popup tiene display:none en CSS
+      const titleText = tagEl ? tagEl.textContent.trim() : el.innerText.trim();
+      let descText = descEl ? descEl.textContent.trim() : popupBox.textContent.replace(titleText, '').trim();
 
       openMobileDrawer({
         tag: 'DESCRIPCIÓN DE FUNCIONES',
@@ -1353,9 +1421,9 @@
       const body = document.getElementById('drawer-body');
       const actionContainer = document.getElementById('drawer-action-container');
 
-      tag.innerText = data.tag || 'INFORMACIÓN';
-      title.innerText = data.title || '';
-      body.innerText = data.body || '';
+      tag.textContent = data.tag || 'DESCRIPCIÓN DE FUNCIONES';
+      title.textContent = data.title || '';
+      body.textContent = data.body || '';
 
       if (data.targetView && data.targetTitle) {
         actionContainer.innerHTML = `
@@ -1442,7 +1510,7 @@
         return { x: r.left + r.width / 2 - vRect.left, y: r.top - vRect.top };
       });
 
-      const busY = areaPts[0].y - 45;
+      const busY = areaPts[0].y - 35;
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
       p += `<line x1="${topX}" y1="${staffCenterY}" x2="${staffLeftX}" y2="${staffCenterY}" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4" />`;
@@ -1487,7 +1555,7 @@
       const o1TopY = rO1.top - v.top;
       const o2TopY = rO2.top - v.top;
 
-      const bus1Y = s1TopY - 35;
+      const bus1Y = s1TopY - 25;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${bus1Y}" stroke="#94a3b8" stroke-width="2" />`;
@@ -1553,7 +1621,7 @@
       const o2X = rO2.left + rO2.width / 2 - v.left;
       const o2TopY = rO2.top - v.top;
 
-      const busY = o1TopY - 40;
+      const busY = o1TopY - 30;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
@@ -1611,7 +1679,7 @@
       const o2X = rO2.left + rO2.width / 2 - v.left;
       const o2TopY = rO2.top - v.top;
 
-      const busY = o1TopY - 40;
+      const busY = o1TopY - 30;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
