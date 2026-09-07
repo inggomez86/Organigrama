@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gerencia de Producción Industrial - Grupo MP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +18,10 @@
       --col-matr: #5c4373;
       --col-mant-veh: #bf6613;
       --col-abast: #1b728b;
+
+      /* Estilo integrado de tarjeta blanca para pop-ups */
+      --popup-bg: #ffffff;
+      --popup-border: #cbd5e1;
     }
 
     * {
@@ -36,6 +40,7 @@
       justify-content: center;
       align-items: center;
       padding: 1.5vh 2vw;
+      -webkit-font-smoothing: antialiased;
     }
 
     .main-canvas {
@@ -56,42 +61,76 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       padding: 0 10px;
       z-index: 2;
+      gap: 15px;
+      position: relative;
     }
 
     .logo-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 140px;
+      min-width: 120px;
     }
 
     .logo-img-left, .logo-img-right {
-      height: 80px;
+      height: 75px;
       width: auto;
+      max-width: 130px;
       object-fit: contain;
     }
 
     .header-titles {
       text-align: center;
       flex-grow: 1;
-      padding: 0 20px;
+      padding: 0 15px;
     }
 
     .header-titles h1 {
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 800;
       color: #0f172a;
       letter-spacing: 0.5px;
+      line-height: 1.2;
     }
 
     .header-titles p {
-      font-size: 14.5px;
+      font-size: 14px;
       color: #64748b;
       margin-top: 4px;
       font-weight: 500;
+    }
+
+    /* BOTÓN VOLVER FLOTANTE */
+    .btn-back {
+      position: absolute;
+      top: 0;
+      left: 10px;
+      background: #ffffff;
+      color: #334155;
+      border: 1.5px solid #cbd5e1;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      z-index: 30;
+    }
+
+    .btn-back:hover {
+      background: var(--navy-main);
+      color: #ffffff;
+      border-color: var(--navy-main);
+      transform: translateX(-3px);
+      box-shadow: 0 4px 12px rgba(24, 45, 73, 0.18);
     }
 
     /* VISTAS */
@@ -109,34 +148,6 @@
       display: flex;
     }
 
-    /* BOTÓN VOLVER */
-    .btn-back {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: #f1f5f9;
-      color: #334155;
-      border: 1px solid #cbd5e1;
-      padding: 8px 18px;
-      border-radius: 8px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      z-index: 20;
-    }
-
-    .btn-back:hover {
-      background: var(--navy-main);
-      color: #ffffff;
-      border-color: var(--navy-main);
-      transform: translateX(-2px);
-    }
-
     /* SVG PARA LÍNEAS */
     .connector-svg {
       position: absolute;
@@ -148,70 +159,133 @@
       z-index: 1;
     }
 
-    /* POP-UPS */
+    /* CONTENEDOR DISPARADOR DE POP-UP */
     .has-popup {
       position: relative;
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       z-index: 10;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .has-popup:hover, .has-popup:focus-within {
+    .has-popup:hover, .has-popup:focus, .has-popup:focus-within {
       z-index: 99999 !important;
       transform: translateY(-2px);
     }
 
+    /* ========================================================
+       DISEÑO DE TARJETA FLOTANTE INTEGRADA AL "TODO" (BLANCA)
+       ======================================================== */
     .popup-box {
       visibility: hidden;
       opacity: 0;
       position: absolute;
       width: 330px;
-      background: #0f172a;
-      color: #ffffff;
-      padding: 14px 16px;
-      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      padding: 16px 18px;
+      border-radius: 12px;
       font-size: 12.5px;
-      line-height: 1.5;
-      font-weight: 400;
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+      line-height: 1.55;
+      font-weight: 500;
+      box-shadow: 0 16px 36px -4px rgba(15, 23, 42, 0.16), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
       pointer-events: none;
-      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+      transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                  visibility 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 100000;
+      text-align: left;
     }
 
+    /* Etiqueta superior del pop-up (hereda el título) */
+    .popup-tag {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    /* Flecha con borde coordinado */
+    .popup-box::before {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      transform: rotate(45deg);
+      z-index: 2;
+    }
+
+    /* Transición al mostrarse */
     .has-popup:hover .popup-box,
-    .has-popup:focus .popup-box {
+    .has-popup:focus .popup-box,
+    .has-popup:focus-within .popup-box {
       visibility: visible;
       opacity: 1;
     }
 
-    /* NODO SUPERIOR PRINCIPAL (POP-UP HACIA ABAJO) */
+    /* 1. NODO SUPERIOR (Despliega hacia abajo + Flecha apuntando arriba) */
     .node-top-dark {
       color: white;
       padding: 18px 32px;
       border-radius: 14px;
       width: 500px;
+      max-width: 100%;
       text-align: center;
       box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
       z-index: 10;
     }
 
     .node-top-dark h2 {
-      font-size: 16px;
+      font-size: 15.5px;
       font-weight: 800;
       letter-spacing: 0.5px;
     }
 
     .node-top-dark .popup-box {
-      top: calc(100% + 12px);
+      top: calc(100% + 14px);
       bottom: auto;
       left: 50%;
-      transform: translateX(-50%) translateY(-4px);
+      transform: translateX(-50%) translateY(-6px) scale(0.97);
+      border-top: 4px solid var(--navy-main);
     }
 
-    .node-top-dark:hover .popup-box {
-      transform: translateX(-50%) translateY(0);
+    .node-top-dark .popup-box::before {
+      top: -7px;
+      left: 50%;
+      margin-left: -6px;
+      border-bottom: none;
+      border-right: none;
     }
+
+    .node-top-dark:hover .popup-box,
+    .node-top-dark:focus .popup-box {
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    /* Acento de color en pop-ups superiores según departamento */
+    #home-gerencia .popup-box { border-top-color: var(--navy-main); }
+    #home-gerencia .popup-tag { color: var(--navy-main); }
+
+    #prod-top .popup-box { border-top-color: var(--col-prod); }
+    #prod-top .popup-tag { color: var(--col-prod); }
+
+    #mi-top .popup-box { border-top-color: var(--col-mant-ind); }
+    #mi-top .popup-tag { color: var(--col-mant-ind); }
+
+    #matr-top .popup-box { border-top-color: var(--col-matr); }
+    #matr-top .popup-tag { color: var(--col-matr); }
+
+    #mv-top .popup-box { border-top-color: var(--col-mant-veh); }
+    #mv-top .popup-tag { color: var(--col-mant-veh); }
+
+    #abast-top .popup-box { border-top-color: var(--col-abast); }
+    #abast-top .popup-tag { color: var(--col-abast); }
 
     /* Colores para nodos principales */
     .bg-navy { background-color: var(--navy-main); }
@@ -221,7 +295,7 @@
     .bg-mant-veh { background-color: var(--col-mant-veh); }
     .bg-abast { background-color: var(--col-abast); }
 
-    /* ZONA MEDIA DEL HOME (STAFF) */
+    /* 2. STAFF LATERAL (Despliega hacia arriba + Flecha apuntando abajo) */
     .middle-zone-home {
       position: relative;
       width: 100%;
@@ -258,16 +332,35 @@
     }
 
     .node-staff .popup-box {
-      bottom: calc(100% + 10px);
+      bottom: calc(100% + 14px);
       right: 0;
       width: 340px;
+      transform: translateY(6px) scale(0.97);
+      border-top: 4px solid #1e3a8a;
     }
 
-    /* GRID HOME (5 ÁREAS) */
+    .node-staff .popup-tag {
+      color: #1e3a8a;
+    }
+
+    .node-staff .popup-box::before {
+      bottom: -7px;
+      right: 45px;
+      left: auto;
+      border-top: none;
+      border-left: none;
+    }
+
+    .node-staff:hover .popup-box,
+    .node-staff:focus .popup-box {
+      transform: translateY(0) scale(1);
+    }
+
+    /* 3. TARJETAS INFERIORES DE ÁREA (Despliegan hacia arriba + Flecha apuntando abajo) */
     .areas-container {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 24px;
+      gap: 20px;
       width: 100%;
       z-index: 10;
     }
@@ -279,7 +372,7 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.05);
       display: flex;
       flex-direction: column;
-      min-height: 110px;
+      min-height: 105px;
       cursor: pointer;
     }
 
@@ -304,21 +397,78 @@
     }
 
     .area-title-wrap h3 {
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 800;
       line-height: 1.35;
       letter-spacing: 0.3px;
     }
 
+    /* Pop-up de área centrado por defecto */
     .node-area .popup-box {
       bottom: calc(100% + 14px);
       top: auto;
       left: 50%;
-      transform: translateX(-50%) translateY(4px);
+      transform: translateX(-50%) translateY(6px) scale(0.97);
     }
 
-    .node-area:hover .popup-box {
-      transform: translateX(-50%) translateY(0);
+    .node-area .popup-box::before {
+      bottom: -7px;
+      left: 50%;
+      margin-left: -6px;
+      border-top: none;
+      border-left: none;
+    }
+
+    .node-area:hover .popup-box,
+    .node-area:focus .popup-box {
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    /* Ajuste para primera tarjeta (Producción - extrema izquierda) */
+    .card-prod .popup-box {
+      left: 0;
+      transform: translateY(6px) scale(0.97);
+      border-top: 4px solid var(--col-prod);
+    }
+    .card-prod .popup-box::before {
+      left: 45px;
+      margin-left: 0;
+    }
+    .card-prod:hover .popup-box,
+    .card-prod:focus .popup-box {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Mantenimiento Industrial */
+    .card-mant-ind .popup-box {
+      border-top: 4px solid var(--col-mant-ind);
+    }
+
+    /* Matricería */
+    .card-matr .popup-box {
+      border-top: 4px solid var(--col-matr);
+    }
+
+    /* Vehicular */
+    .card-mant-veh .popup-box {
+      border-top: 4px solid var(--col-mant-veh);
+    }
+
+    /* Ajuste para última tarjeta (Abastecimiento - extrema derecha) */
+    .card-abast .popup-box {
+      left: auto;
+      right: 0;
+      transform: translateY(6px) scale(0.97);
+      border-top: 4px solid var(--col-abast);
+    }
+    .card-abast .popup-box::before {
+      left: auto;
+      right: 45px;
+      margin-left: 0;
+    }
+    .card-abast:hover .popup-box,
+    .card-abast:focus .popup-box {
+      transform: translateY(0) scale(1);
     }
 
     .card-prod .area-bar { background-color: var(--col-prod); }
@@ -332,7 +482,7 @@
     .card-abast .area-bar { background-color: var(--col-abast); }
     .card-abast h3 { color: var(--col-abast); }
 
-    /* ESTILOS DE TARJETAS BLANCAS DE SUB-NIVELES */
+    /* 4. TARJETAS DE SUB-NIVELES */
     .card-sublevel {
       background: #ffffff;
       border: 1px solid #cbd5e1;
@@ -355,14 +505,13 @@
       letter-spacing: 0.3px;
     }
 
-    /* Lista de puestos / sub-roles */
     .puestos-list {
       list-style: none;
       margin-top: 8px;
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
       width: 100%;
     }
 
@@ -371,25 +520,41 @@
       font-weight: 600;
       color: #475569;
       background: #f1f5f9;
-      padding: 4px 8px;
+      padding: 5px 8px;
       border-radius: 6px;
     }
 
     .card-sublevel .popup-box {
-      bottom: calc(100% + 12px);
+      bottom: calc(100% + 14px);
       top: auto;
       left: 50%;
-      transform: translateX(-50%) translateY(4px);
+      transform: translateX(-50%) translateY(6px) scale(0.97);
     }
 
-    .card-sublevel:hover .popup-box {
-      transform: translateX(-50%) translateY(0);
+    .card-sublevel .popup-box::before {
+      bottom: -7px;
+      left: 50%;
+      margin-left: -6px;
+      border-top: none;
+      border-left: none;
     }
+
+    .card-sublevel:hover .popup-box,
+    .card-sublevel:focus .popup-box {
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    /* Colores temáticos en pop-ups de sub-niveles */
+    #prod-sup-1 .popup-box, #prod-sup-2 .popup-box { border-top: 4px solid var(--col-prod); }
+    #prod-sup-1 .popup-tag, #prod-sup-2 .popup-tag { color: var(--col-prod); }
+
+    #mi-mid .popup-box { border-top: 4px solid var(--col-mant-ind); }
+    #mi-mid .popup-tag { color: var(--col-mant-ind); }
 
     .grid-2-cols {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 50px;
+      gap: 40px;
       width: 80%;
       z-index: 10;
     }
@@ -401,9 +566,142 @@
       z-index: 10;
     }
 
-    .spacer-zone {
-      height: 70px;
+    /* Espaciadores ajustados a la jerarquía visual */
+    .spacer-3levels {
+      height: 60px;
       width: 100%;
+    }
+
+    .spacer-2levels {
+      height: 140px;
+      width: 100%;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+      body {
+        padding: 10px;
+        min-height: 100vh;
+        justify-content: flex-start;
+      }
+
+      .main-canvas {
+        min-height: auto;
+        padding: 20px 15px;
+        border-radius: 12px;
+      }
+
+      .header {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .logo-container {
+        min-width: auto;
+      }
+
+      .logo-img-left, .logo-img-right {
+        height: 50px;
+        max-width: 90px;
+      }
+
+      .header-titles {
+        width: 100%;
+        order: 3;
+        padding: 0;
+        margin-top: 5px;
+      }
+
+      .header-titles h1 {
+        font-size: 19px;
+      }
+
+      .header-titles p {
+        font-size: 12px;
+      }
+
+      .connector-svg {
+        display: none;
+      }
+
+      .btn-back {
+        position: static;
+        margin-bottom: 15px;
+        align-self: flex-start;
+      }
+
+      .node-top-dark {
+        width: 100%;
+        padding: 16px;
+      }
+
+      .node-top-dark h2 {
+        font-size: 14px;
+      }
+
+      .middle-zone-home {
+        height: auto;
+        margin: 15px 0;
+        justify-content: center;
+      }
+
+      .node-staff {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .areas-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .node-area {
+        min-height: 70px;
+      }
+
+      .grid-2-cols {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        width: 100%;
+      }
+
+      .grid-1-col .card-sublevel {
+        width: 100% !important;
+      }
+
+      .spacer-3levels, .spacer-2levels {
+        height: 15px;
+      }
+
+      .popup-box {
+        width: calc(100vw - 40px);
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        font-size: 12px;
+        padding: 14px;
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+
+      .popup-box::before {
+        display: none !important;
+      }
+
+      .node-area .popup-box,
+      .card-sublevel .popup-box {
+        bottom: calc(100% + 8px);
+        top: auto;
+      }
+
+      .node-top-dark .popup-box {
+        top: calc(100% + 8px);
+        bottom: auto;
+      }
     }
   </style>
 </head>
@@ -436,6 +734,7 @@
       <div class="node-top-dark bg-navy has-popup" id="home-gerencia" tabindex="0">
         <h2>GERENCIA DE PRODUCCIÓN INDUSTRIAL</h2>
         <div class="popup-box">
+          <span class="popup-tag">GERENCIA DE PRODUCCIÓN INDUSTRIAL</span>
           Gestionar integralmente la operación industrial, coordinando la ejecución del proceso productivo, el abastecimiento y disponibilidad de materias primas, y la conservación y disponibilidad de los equipos, instalaciones, maquinaria móvil, herramental y recursos técnicos necesarios para la operación. Orientar la gestión al cumplimiento de los objetivos productivos y de calidad, asegurando la continuidad operativa y la coordinación entre las distintas áreas que intervienen en el proceso.
         </div>
       </div>
@@ -445,6 +744,7 @@
           <div class="staff-sub">SOPORTE TRANSVERSAL / STAFF</div>
           <div class="staff-name">INGENIERÍA</div>
           <div class="popup-box">
+            <span class="popup-tag">INGENIERÍA</span>
             Brindar soporte técnico transversal a las distintas unidades de negocio del Grupo, desarrollando e implementando proyectos de mejora, optimización y modernización de procesos e instalaciones, con especialización en ingeniería eléctrica, electrónica, mecánica, automatización e instrumentación, y acompañando la incorporación de nuevas tecnologías.
           </div>
         </div>
@@ -455,6 +755,7 @@
           <div class="area-bar"></div>
           <div class="area-title-wrap"><h3>PRODUCCIÓN</h3></div>
           <div class="popup-box">
+            <span class="popup-tag" style="color: var(--col-prod);">PRODUCCIÓN</span>
             Asegurar la ejecución del cronograma de producción en tiempo y forma, gestionando los recursos y procesos para alcanzar los volúmenes previstos bajo estándares de calidad, productividad y eficiencia operativa.
           </div>
         </div>
@@ -463,6 +764,7 @@
           <div class="area-bar"></div>
           <div class="area-title-wrap"><h3>MANTENIMIENTO INDUSTRIAL</h3></div>
           <div class="popup-box">
+            <span class="popup-tag" style="color: var(--col-mant-ind);">MANTENIMIENTO INDUSTRIAL</span>
             Garantizar disponibilidad y confiabilidad de equipos e instalaciones industriales mediante mantenimiento preventivo, predictivo y correctivo, gestionando repuestos y recursos para la continuidad operativa.
           </div>
         </div>
@@ -471,6 +773,7 @@
           <div class="area-bar"></div>
           <div class="area-title-wrap"><h3>MATRICERÍA Y TALLER</h3></div>
           <div class="popup-box">
+            <span class="popup-tag" style="color: var(--col-matr);">MATRICERÍA Y TALLER</span>
             Asegurar disponibilidad de moldes de producción, mediante la fabricación mantenimiento, preparación y puesta a punto de dados, boquillas, y estructura. Brindar soporte de fabricación, mecanizado y reparación metalmecánica desde el taller.
           </div>
         </div>
@@ -479,6 +782,7 @@
           <div class="area-bar"></div>
           <div class="area-title-wrap"><h3>MANTENIMIENTO VEHICULAR</h3></div>
           <div class="popup-box">
+            <span class="popup-tag" style="color: var(--col-mant-veh);">MANTENIMIENTO VEHICULAR</span>
             Garantizar disponibilidad y confiabilidad de la flota y equipos móviles mediante planificación y ejecución del mantenimiento preventivo y correctivo, sosteniendo la capacidad de operación.
           </div>
         </div>
@@ -487,6 +791,7 @@
           <div class="area-bar"></div>
           <div class="area-title-wrap"><h3>ABASTECIMIENTO</h3></div>
           <div class="popup-box">
+            <span class="popup-tag" style="color: var(--col-abast);">ABASTECIMIENTO</span>
             Asegurar el suministro continuo de materias primas a producción, gestionando de forma eficiente su extracción, preparación, acopio y logística según los requerimientos operativos.
           </div>
         </div>
@@ -504,17 +809,19 @@
       <div class="node-top-dark bg-prod has-popup" id="prod-top" tabindex="0">
         <h2>ANALISTA DE DATOS Y PROCESOS</h2>
         <div class="popup-box">
+          <span class="popup-tag">ANALISTA DE DATOS Y PROCESOS</span>
           Analiza los procesos industriales mediante la gestión de datos, desarrollando indicadores y herramientas de control que permitan detectar desvíos, pérdidas y oportunidades de mejora. Realiza el seguimiento de la información productiva y de consumos, impulsa acciones de mejora y brinda soporte a la toma de decisiones de la Gerencia. Asume la coordinación operativa del área Industrial en ausencia del Gerente.
         </div>
       </div>
 
-      <div class="spacer-zone"></div>
+      <div class="spacer-3levels"></div>
 
       <!-- Nivel 2: Supervisores -->
       <div class="grid-2-cols" id="prod-mid-grid">
         <div class="card-sublevel has-popup" id="prod-sup-1" style="border-top: 6px solid var(--col-prod);" tabindex="0">
           <h3 style="color: var(--col-prod);">SUPERVISORES DE PRODUCCIÓN</h3>
           <div class="popup-box">
+            <span class="popup-tag">SUPERVISORES DE PRODUCCIÓN</span>
             Conduce integralmente la operación de la planta durante su turno, coordinando al personal y supervisando el proceso, sus parámetros y las condiciones de equipos e instalaciones. Es responsable del cumplimiento de los objetivos productivos del turno, la continuidad operativa, la calidad, el orden y la seguridad, tomando decisiones ante desvíos y coordinando las intervenciones necesarias con las áreas de soporte.
           </div>
         </div>
@@ -522,12 +829,13 @@
         <div class="card-sublevel has-popup" id="prod-sup-2" style="border-top: 6px solid var(--col-prod);" tabindex="0">
           <h3 style="color: var(--col-prod);">SUPERVISOR DE INSUMOS Y VAGONETAS</h3>
           <div class="popup-box">
+            <span class="popup-tag">SUPERVISOR DE INSUMOS Y VAGONETAS</span>
             Asegura la disponibilidad y correcta gestión de los insumos requeridos por Producción, coordinando su recepción, almacenamiento y entrega. Gestiona el mantenimiento y reparación de las vagonetas para garantizar su disponibilidad operativa.
           </div>
         </div>
       </div>
 
-      <div class="spacer-zone"></div>
+      <div class="spacer-3levels"></div>
 
       <!-- Nivel 3: Operativos -->
       <div class="grid-2-cols" id="prod-bot-grid">
@@ -562,23 +870,25 @@
       <div class="node-top-dark bg-mant-ind has-popup" id="mi-top" tabindex="0">
         <h2>ANALISTA DE MANTENIMIENTO</h2>
         <div class="popup-box">
+          <span class="popup-tag">ANALISTA DE MANTENIMIENTO</span>
           Planifica, coordina y controla la gestión de mantenimiento industrial, definiendo y actualizando los planes preventivos, criticidad de equipos y necesidades de repuestos y servicios. Gestiona la información técnica y el sistema de mantenimiento, analiza fallas e indicadores y coordina con Producción las ventanas de intervención, buscando mejorar la disponibilidad y confiabilidad de los equipos.
         </div>
       </div>
 
-      <div class="spacer-zone"></div>
+      <div class="spacer-3levels"></div>
 
       <!-- Nivel 2 -->
       <div class="grid-1-col">
         <div class="card-sublevel has-popup" id="mi-mid" style="width: 480px; border-top: 6px solid var(--col-mant-ind);" tabindex="0">
           <h3 style="color: var(--col-mant-ind);">SUPERVISOR DE MANTENIMIENTO INDUSTRIAL</h3>
           <div class="popup-box">
+            <span class="popup-tag">SUPERVISOR DE MANTENIMIENTO INDUSTRIAL</span>
             Supervisa y coordina la ejecución de las tareas de mantenimiento industrial, conduciendo al personal y asegurando la correcta realización de intervenciones preventivas y correctivas. Diagnostica fallas, asigna recursos y coordina con Producción las intervenciones y puestas en marcha, garantizando trabajos seguros, técnicamente adecuados y orientados a recuperar y preservar la disponibilidad de los equipos.
           </div>
         </div>
       </div>
 
-      <div class="spacer-zone"></div>
+      <div class="spacer-3levels"></div>
 
       <!-- Nivel 3 -->
       <div class="grid-1-col">
@@ -603,11 +913,12 @@
       <div class="node-top-dark bg-matr has-popup" id="matr-top" tabindex="0">
         <h2>SUPERVISOR DE MATRICERÍA</h2>
         <div class="popup-box">
+          <span class="popup-tag">SUPERVISOR DE MATRICERÍA</span>
           Gestiona la fabricación, mantenimiento, ajuste y disponibilidad de los moldes de producción, asegurando su condición dimensional y funcional y su impacto sobre la calidad y estabilidad del proceso. Analiza problemas de producto y proceso vinculados a matricería, extrusión y materia prima, definiendo ajustes y acciones correctivas, y conduce técnicamente al personal del área. Planifica y supervisa los trabajos de mecanizado, fabricación y reparación metalmecánica realizados desde el taller.
         </div>
       </div>
 
-      <div style="height: 120px;"></div>
+      <div class="spacer-2levels"></div>
 
       <!-- Nivel 2 -->
       <div class="grid-2-cols" id="matr-bot-grid">
@@ -641,11 +952,12 @@
       <div class="node-top-dark bg-mant-veh has-popup" id="mv-top" tabindex="0">
         <h2>SUPERVISOR DE MANTENIMIENTO VEHICULAR</h2>
         <div class="popup-box">
+          <span class="popup-tag">SUPERVISOR DE MANTENIMIENTO VEHICULAR</span>
           Supervisa y coordina el mantenimiento preventivo y correctivo de las unidades móviles del área Industrial, conduciendo al personal y asegurando su disponibilidad, confiabilidad y seguridad. Planifica intervenciones, diagnostica fallas y define su resolución con recursos propios o externos, coordinando con las áreas usuarias las paradas y liberación de las unidades.
         </div>
       </div>
 
-      <div style="height: 140px;"></div>
+      <div class="spacer-2levels"></div>
 
       <!-- Nivel 2 -->
       <div class="grid-1-col">
@@ -669,11 +981,12 @@
       <div class="node-top-dark bg-abast has-popup" id="abast-top" tabindex="0">
         <h2>SUPERVISOR DE ABASTECIMIENTO</h2>
         <div class="popup-box">
+          <span class="popup-tag">SUPERVISOR DE ABASTECIMIENTO</span>
           Supervisa y coordina la extracción, acopio y logística de arcilla necesaria para abastecer a las plantas industriales. Gestiona los recursos de cantera y transporte, propios y de terceros, planificando la extracción y los viajes según las necesidades productivas y asegurando continuidad de abastecimiento, eficiencia operativa y condiciones seguras de trabajo.
         </div>
       </div>
 
-      <div style="height: 120px;"></div>
+      <div class="spacer-2levels"></div>
 
       <!-- Nivel 2 -->
       <div class="grid-2-cols" id="abast-bot-grid">
@@ -705,19 +1018,23 @@
       if (activeView) activeView.classList.add('active');
       
       document.getElementById('header-main-title').innerText = title;
-      
-      // Actualizar el título de la pestaña del navegador dinámicamente
       if (viewId === 'view-home') {
         document.title = 'Gerencia de Producción Industrial - Grupo MP';
       } else {
-        document.title = title + ' - Grupo MP';
+        document.title = `${title} — Grupo MP`;
       }
-      
       currentViewId = viewId;
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(redrawCurrentView, 50);
     }
 
     function redrawCurrentView() {
+      if (window.innerWidth <= 992) {
+        document.querySelectorAll('.connector-svg').forEach(svg => svg.innerHTML = '');
+        return;
+      }
+
       if (currentViewId === 'view-home') drawHomeLines();
       else if (currentViewId === 'view-prod') drawProdLines();
       else if (currentViewId === 'view-mant-ind') drawMantIndLines();
@@ -861,7 +1178,7 @@
       const o2X = rO2.left + rO2.width / 2 - v.left;
       const o2TopY = rO2.top - v.top;
 
-      const busY = o1TopY - 50;
+      const busY = o1TopY - 40;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
@@ -919,7 +1236,7 @@
       const o2X = rO2.left + rO2.width / 2 - v.left;
       const o2TopY = rO2.top - v.top;
 
-      const busY = o1TopY - 50;
+      const busY = o1TopY - 40;
 
       let p = '';
       p += `<line x1="${topX}" y1="${topY}" x2="${topX}" y2="${busY}" stroke="#94a3b8" stroke-width="2" />`;
